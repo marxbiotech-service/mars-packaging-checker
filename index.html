@@ -226,7 +226,7 @@
     <div class="form-row">
       <label class="form-label">Claude API Key</label>
       <div class="api-key-row">
-        <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" value="" />
+        <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" value="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" />
         <button class="api-key-toggle" onclick="toggleApiKey()" title="顯示/隱藏">👁</button>
       </div>
     </div>
@@ -237,7 +237,7 @@
     <div class="form-row">
       <label class="form-label">產品類型</label>
       <select id="productType">
-        <option value="">請選擇…</option>
+        <option value="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">請選擇…</option>
         <option value="food">食品</option>
         <option value="cosmetic">保養品／化粧品</option>
       </select>
@@ -245,7 +245,7 @@
     <div class="form-row">
       <label class="form-label">包裝類型</label>
       <select id="packagingType">
-        <option value="">請選擇…</option>
+        <option value="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">請選擇…</option>
         <option value="alubag">鋁袋／鋁包</option>
         <option value="outerbox">外盒</option>
         <option value="label">瓶貼／標籤</option>
@@ -255,7 +255,7 @@
     <div class="form-row">
       <label class="form-label">品牌</label>
       <select id="brandSelect">
-        <option value="">請選擇…</option>
+        <option value="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">請選擇…</option>
         <option value="Diu+">Diu+（丟丟）</option>
         <option value="SnowYOU">SnowYOU（樹飛雪）</option>
         <option value="大激賞">大激賞</option>
@@ -1121,9 +1121,8 @@ ${productDataBlock}
   ]
 }`;
 
-  // Claude API - 使用 vision
-  const claudeContent = [
-    { type: "text", text: systemPrompt },
+  // Claude API - system prompt 分離，節省 token
+  const claudeUserContent = [
     ...uploadedFiles.map(f => ({
       type: "image",
       source: {
@@ -1132,7 +1131,7 @@ ${productDataBlock}
         data: f.data.split(',')[1]
       }
     })),
-    { type: "text", text: "請審查以上包裝設計稿，回傳JSON格式審查報告。" }
+    { type: "text", text: "請審查以上包裝設計稿，回傳JSON格式審查報告。只回JSON，不要有其他文字或markdown。" }
   ];
 
   try {
@@ -1147,15 +1146,19 @@ ${productDataBlock}
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
-        max_tokens: 2000,
-        messages: [{ role: "user", content: claudeContent }]
+        max_tokens: 4096,
+        system: systemPrompt,
+        messages: [{ role: "user", content: claudeUserContent }]
       })
     });
     const data = await resp.json();
     if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
     let text = data.content?.[0]?.text || '';
+    // 容錯：移除 markdown、只取第一個完整 JSON 物件
     text = text.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(text);
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('AI 回傳格式錯誤，請重試');
+    const parsed = JSON.parse(jsonMatch[0]);
 
     // 注入條碼問題
     if (dupBc.length) {

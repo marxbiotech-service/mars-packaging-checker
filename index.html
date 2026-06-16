@@ -1295,12 +1295,15 @@ function toggleApiKey() {
   inp.type = inp.type === 'password' ? 'text' : 'password';
 }
 
-// API Key 自動儲存
+// API Key：HTML 內建 Key 優先，sessionStorage 只在 HTML 沒有 Key 時才套用
 document.getElementById('apiKey').addEventListener('change', e => {
   sessionStorage.setItem('claude_key', e.target.value);
 });
-const savedKey = sessionStorage.getItem('claude_key');
-if (savedKey) document.getElementById('apiKey').value = savedKey;
+const hardcodedKey = document.getElementById('apiKey').value;
+if (!hardcodedKey) {
+  const savedKey = sessionStorage.getItem('claude_key');
+  if (savedKey) document.getElementById('apiKey').value = savedKey;
+}
 </script>
 </body>
 </html>

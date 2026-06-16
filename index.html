@@ -224,9 +224,9 @@
   <div class="sidebar-section">
     <div class="sidebar-section-label">API 設定</div>
     <div class="form-row">
-      <label class="form-label">Gemini API Key</label>
+      <label class="form-label">Claude API Key</label>
       <div class="api-key-row">
-        <input type="password" id="apiKey" placeholder="AIza..." autocomplete="off" value="AQ.Ab8RN6KA8Nu4SDFpAijcrNNmmXKMs5AVZ0OWT16d77ckPzJ_iw" />
+        <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" value="" />
         <button class="api-key-toggle" onclick="toggleApiKey()" title="顯示/隱藏">👁</button>
       </div>
     </div>
@@ -1048,7 +1048,7 @@ async function runCheck() {
   const brand = document.getElementById('brandSelect').value;
   const productName = document.getElementById('productName').value.trim();
 
-  if (!apiKey) { alert('請先輸入 Gemini API Key'); return; }
+  if (!apiKey) { alert('請先輸入 Claude API Key'); return; }
   if (!productType || !packagingType) { alert('請選擇產品類型與包裝類型'); return; }
   if (uploadedFiles.length === 0) { alert('請上傳至少一張設計稿'); return; }
 
@@ -1121,33 +1121,39 @@ ${productDataBlock}
   ]
 }`;
 
-  // Gemini API - 使用 vision
-  const imageBase64 = uploadedFiles[0].data.split(',')[1];
-  const mimeType = uploadedFiles[0].type;
-
-  const body = {
-    contents: [{
-      parts: [
-        { text: systemPrompt },
-        { inline_data: { mime_type: mimeType, data: imageBase64 } },
-        ...(uploadedFiles.slice(1).map(f => ({ inline_data: { mime_type: f.type, data: f.data.split(',')[1] } }))),
-        { text: '請審查以上包裝設計稿，回傳JSON格式審查報告。' }
-      ]
-    }],
-    generationConfig: { temperature: 0.2, maxOutputTokens: 2048 }
-  };
+  // Claude API - 使用 vision
+  const claudeContent = [
+    { type: "text", text: systemPrompt },
+    ...uploadedFiles.map(f => ({
+      type: "image",
+      source: {
+        type: "base64",
+        media_type: f.type,
+        data: f.data.split(',')[1]
+      }
+    })),
+    { type: "text", text: "請審查以上包裝設計稿，回傳JSON格式審查報告。" }
+  ];
 
   try {
-    const isNewKeyFormat = apiKey.startsWith("AQ.");
-    const apiUrl = isNewKeyFormat
-      ? `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`
-      : `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-    const reqHeaders = { "Content-Type": "application/json" };
-    if (isNewKeyFormat) reqHeaders["x-goog-api-key"] = apiKey;
-    const resp = await fetch(apiUrl, { method: "POST", headers: reqHeaders, body: JSON.stringify(body) });
+    // 呼叫 Anthropic Claude API
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 2000,
+        messages: [{ role: "user", content: claudeContent }]
+      })
+    });
     const data = await resp.json();
-    if (data.error) throw new Error(data.error.message);
-    let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+    let text = data.content?.[0]?.text || '';
     text = text.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(text);
 
@@ -1288,9 +1294,9 @@ function toggleApiKey() {
 
 // API Key 自動儲存
 document.getElementById('apiKey').addEventListener('change', e => {
-  sessionStorage.setItem('gemini_key', e.target.value);
+  sessionStorage.setItem('claude_key', e.target.value);
 });
-const savedKey = sessionStorage.getItem('gemini_key');
+const savedKey = sessionStorage.getItem('claude_key');
 if (savedKey) document.getElementById('apiKey').value = savedKey;
 </script>
 </body>

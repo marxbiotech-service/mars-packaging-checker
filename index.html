@@ -830,4 +830,468 @@ const PRODUCT_DB = [
   {
     brand: "Diu+", name: "璀璨藍銅彈潤精華液",
     type: "cosmetic", category: "保養品", form: "精華液",
-    spec: "30ml", shelf_life: "3年", o
+    spec: "30ml", shelf_life: "3年", origin: "台灣",
+    net_weight: "30ml",
+    ingredients: "水、銅胜肽（GHK-Cu）、玻尿酸鈉、神經醯胺、赤芝萃取",
+    allergens: "無特別標示",
+    warnings: "化妝水後使用，使用前搖晃均勻，取適量輕柔按壓於全臉",
+    storage: "陰涼乾燥處，避免陽光直射",
+    serving: "化妝水後，使用前搖晃均勻，取適量輕柔按壓於全臉，待吸收後進行後續保養",
+    prohibited: "無特別禁忌"
+  },
+  {
+    brand: "Diu+", name: "藍銅彈力緊緻水凝霜",
+    type: "cosmetic", category: "保養品", form: "乳霜",
+    spec: "50ml", shelf_life: "3年", origin: "台灣",
+    net_weight: "50ml",
+    ingredients: "水、銅胜肽（GHK-Cu）、玻尿酸鈉、甘油、赤芝萃取",
+    allergens: "無特別標示",
+    warnings: "化妝水後使用，取適量輕點於臉部，以指腹均勻按摩至完全吸收",
+    storage: "陰涼乾燥處，避免陽光直射",
+    serving: "化妝水後，取適量輕點於臉部，以指腹均勻按摩至完全吸收",
+    prohibited: "無特別禁忌"
+  },
+  {
+    brand: "Diu+", name: "智慧型閃耀養膚粉底",
+    type: "cosmetic", category: "保養品", form: "粉底液",
+    spec: "40ml", shelf_life: "3年", origin: "台灣",
+    net_weight: "40ml",
+    ingredients: "SPF35防曬，輕薄遮瑕自然妝感，養膚配方",
+    allergens: "無特別標示",
+    warnings: "防曬力SPF35；注意均勻推展",
+    storage: "陰涼乾燥處",
+    serving: "保養後取適量塗抹全臉，由內到外由下到上輕輕提拉",
+    prohibited: "無特別禁忌"
+  },
+  {
+    brand: "Diu+", name: "維他命C美白奈米粉",
+    type: "cosmetic", category: "保養品", form: "粉末",
+    spec: "15g", shelf_life: "3年", origin: "台灣",
+    net_weight: "15g",
+    ingredients: "維生素C（L-抗壞血酸）、奈米微粒化配方",
+    allergens: "無特別標示",
+    warnings: "建議晚上使用為主，白天使用需做好防曬；可加入化妝水、精華液或乳霜中混合使用；若有發紅或過敏反應，請停止使用",
+    storage: "陰涼乾燥處，避免陽光直射",
+    serving: "可加入化妝水、精華液或乳霜中混合使用，均勻塗抹全臉",
+    prohibited: "肌膚過敏者注意"
+  }
+];
+
+// ── 產品名稱比對輔助函式 ──────────────────────────────────────
+function findProductByName(name) {
+  if (!name) return null;
+  const n = name.trim().toLowerCase();
+  return PRODUCT_DB.find(p =>
+    p.name.toLowerCase().includes(n) ||
+    n.includes(p.name.toLowerCase().replace(/（.*?）/g, '').trim())
+  );
+}
+
+function findProductByBarcode(barcode) {
+  return PRODUCT_DB.find(p => p.barcode === barcode);
+}
+
+// ── 狀態 ──────────────────────────────────────────────────
+let uploadedFiles = [];
+let allIssues = [];
+let bcIdx = 1;
+let approvedHistory = JSON.parse(localStorage.getItem('mars_approved') || '[]');
+
+// ── 上傳 ──────────────────────────────────────────────────
+const uploadZone = document.getElementById('uploadZone');
+const fileInput = document.getElementById('fileInput');
+uploadZone.addEventListener('click', () => fileInput.click());
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag'));
+uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
+fileInput.addEventListener('change', e => handleFiles(e.target.files));
+
+function handleFiles(files) {
+  Array.from(files).slice(0, 5 - uploadedFiles.length).forEach(f => {
+    const reader = new FileReader();
+    reader.onload = ev => { uploadedFiles.push({ name: f.name, data: ev.target.result, type: f.type }); renderPreviews(); };
+    reader.readAsDataURL(f);
+  });
+}
+
+function renderPreviews() {
+  const grid = document.getElementById('previewGrid');
+  grid.innerHTML = uploadedFiles.map((f, i) => `
+    <div class="preview-item">
+      <img src="${f.data}" alt="${f.name}" />
+      <div class="preview-name">${f.name}</div>
+      <button class="preview-remove" onclick="removeFile(${i})">✕</button>
+    </div>`).join('');
+}
+
+function removeFile(i) { uploadedFiles.splice(i, 1); renderPreviews(); }
+
+// ── 條碼 ──────────────────────────────────────────────────
+function addBarcodeRow() {
+  const list = document.getElementById('barcodeList');
+  const div = document.createElement('div');
+  div.className = 'barcode-row'; div.dataset.idx = bcIdx++;
+  div.innerHTML = `<input type="text" class="barcode-input bc-input" placeholder="EAN-13 條碼" maxlength="20" oninput="checkBarcodes()" />
+    <span class="barcode-status bc-empty">未填寫</span>
+    <button class="btn-remove-bc" onclick="this.parentElement.remove(); checkBarcodes()">×</button>`;
+  list.appendChild(div);
+  div.querySelector('input').addEventListener('input', () => { checkBarcodes(); showProductInfo(); });
+}
+
+function showProductInfo() {
+  const bcVals = Array.from(document.querySelectorAll('.bc-input')).map(i => i.value.trim()).filter(Boolean);
+  const productName = document.getElementById('productName').value.trim();
+  let p = null;
+  for (const v of bcVals) {
+    p = findProductByBarcode(v);
+    if (p) break;
+  }
+  if (!p && productName) p = findProductByName(productName);
+
+  const card = document.getElementById('productInfoCard');
+  const content = document.getElementById('productInfoContent');
+  if (!p) { card.style.display = 'none'; return; }
+  card.style.display = 'block';
+
+  const rows = [
+    ['品牌', p.brand],
+    ['產品名稱', p.name],
+    ['規格/淨重', p.spec],
+    ['保存期限', p.shelf_life],
+    ['原產地', p.origin],
+    ['劑型', p.form],
+    ['食用/用法', p.serving],
+    ['保存方式', p.storage],
+    ['過敏原', `<span class="${(p.allergens.includes('⚠️') || (p.allergens !== '無常見過敏原' && p.allergens !== '無特別標示')) ? 'product-info-allergen' : ''}">${p.allergens}</span>`],
+    ['注意事項', `<span class="product-info-warn">${p.warnings}</span>`],
+    ['禁用族群', p.prohibited],
+    ['全成分', p.ingredients],
+  ];
+  content.innerHTML = `<table class="product-info-table">${rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`;
+}
+
+document.getElementById('productName').addEventListener('input', showProductInfo);
+document.querySelector('.bc-input').addEventListener('input', () => { checkBarcodes(); showProductInfo(); });
+
+function checkBarcodes() {
+  const rows = document.querySelectorAll('.barcode-row');
+  const vals = Array.from(rows).map(r => r.querySelector('.bc-input').value.trim());
+  let infoHTML = '';
+
+  rows.forEach((row, i) => {
+    const v = vals[i];
+    const status = row.querySelector('.barcode-status');
+    if (!v) { status.className = 'barcode-status bc-empty'; status.textContent = '未填寫'; return; }
+    const isDup = vals.filter((x, j) => j !== i && x === v && x !== '').length > 0;
+    if (isDup) { status.className = 'barcode-status bc-dup'; status.textContent = '⚠ 重複'; return; }
+    const dbMatch = BARCODE_DB.find(d => d.barcode === v);
+    if (dbMatch) {
+      status.className = 'barcode-status bc-match';
+      status.textContent = '已登記';
+      infoHTML += `<div class="barcode-match-info">✓ ${v} → ${dbMatch.brand}｜${dbMatch.name}</div>`;
+    } else if (/^\d{8}$|^\d{13}$/.test(v)) {
+      status.className = 'barcode-status bc-new';
+      status.textContent = '新條碼';
+      infoHTML += `<div class="barcode-match-info" style="color:var(--info)">★ ${v} 未在資料庫，請確認是否為新品條碼</div>`;
+    } else {
+      status.className = 'barcode-status bc-empty';
+      status.textContent = '格式異常';
+    }
+  });
+  document.getElementById('barcodeMatchInfo').innerHTML = infoHTML;
+}
+
+// ── 審查 ──────────────────────────────────────────────────
+const FOOD_PROMPT = `你是台灣食品包裝法規專家。依據食品安全衛生管理法第22條審查包裝設計圖。
+
+必要標示項目：
+1. 品名（中文為主，不得使用誇大不實字詞）
+2. 內容物名稱及重量/容量/數量（每小包及每盒）
+3. 食品添加物名稱（完整列出所有添加物）
+4. 製造廠商名稱、電話及地址（進口品需有進口商資訊）
+5. 原產地（國）
+6. 有效日期（標示位置說明：XX年XX月XX日 或 最佳賞味期限）
+7. 營養標示（熱量、蛋白質、脂肪、飽和脂肪、反式脂肪、碳水化合物、糖、鈉）
+8. 基因改造食品原料（如適用需標示）
+9. 過敏原標示（蛋、奶、花生、堅果、芝麻、魚、甲殼類、大豆、小麥）
+10. 條碼（EAN-13 或 QR碼）
+11. 消費者服務專線
+12. 「食品」標示及回收圖示
+
+禁止用詞：治療、醫療效果、預防疾病、療效、特效等醫療宣稱。
+注意事項標示：孕婦、兒童、服藥者使用限制。
+字體：中文字最小應達 4pt，關鍵標示不得被遮蓋。`;
+
+const COSMETIC_PROMPT = `你是台灣化粧品包裝法規專家。依據化粧品衛生安全管理法第7條審查包裝設計圖。
+
+必要標示項目：
+1. 品名（中文為主）
+2. 用途（功能說明，不得有醫療宣稱）
+3. 用法（使用方式）
+4. 淨重/容量/數量（中文標示）
+5. 全成分（INCI名稱，依濃度由高至低排列）
+6. 製造廠商名稱及地址（進口品需有輸入廠商）
+7. 製造日期或批號
+8. 保存期限或有效日期（效期≦3年者須標示）
+9. 保存方法（特殊保存需求）
+10. 警語（如含酒精、避免眼睛接觸、兒童不宜等）
+11. QR碼（連結至PIF產品資訊檔案，2026年7月1日起適用）
+12. 許可字號（含防腐劑、類固醇等特定成分者）
+
+禁止用詞：治療、醫療、藥用、療效等醫療宣稱。
+成分標示：含1%以上成分依濃度排列，1%以下可任意順序，色素、香料可統稱。`;
+
+async function runCheck() {
+  const apiKey = document.getElementById('apiKey').value.trim();
+  const productType = document.getElementById('productType').value;
+  const packagingType = document.getElementById('packagingType').value;
+  const brand = document.getElementById('brandSelect').value;
+  const productName = document.getElementById('productName').value.trim();
+
+  if (!apiKey) { alert('請先輸入 Gemini API Key'); return; }
+  if (!productType || !packagingType) { alert('請選擇產品類型與包裝類型'); return; }
+  if (uploadedFiles.length === 0) { alert('請上傳至少一張設計稿'); return; }
+
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="loading-dots"><span></span><span></span><span></span></span>&nbsp;AI 審查中，請稍候…`;
+  document.getElementById('resultSection').classList.add('hidden');
+
+  const ptLabel = { food: '食品', cosmetic: '保養品／化粧品' }[productType];
+  const pkgLabel = { alubag: '鋁袋／鋁包', outerbox: '外盒', label: '瓶貼／標籤', bottle: '瓶身' }[packagingType];
+
+  const bcVals = Array.from(document.querySelectorAll('.bc-input')).map(i => i.value.trim()).filter(Boolean);
+  const dupBc = bcVals.filter((v, i) => bcVals.indexOf(v) !== i);
+  const newBc = bcVals.filter(v => !BARCODE_DB.find(d => d.barcode === v) && /^\d{8}$|^\d{13}$/.test(v));
+  const matchBc = bcVals.filter(v => BARCODE_DB.find(d => d.barcode === v));
+
+  // 比對產品資料庫
+  let productData = null;
+  if (bcVals.length && matchBc.length) {
+    productData = findProductByBarcode(matchBc[0]);
+  }
+  if (!productData && productName) {
+    productData = findProductByName(productName);
+  }
+
+  const productDataBlock = productData ? `
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📦 產品資料庫比對結果（請重點核查以下欄位是否正確）：
+品牌：${productData.brand}
+產品名稱：${productData.name}
+規格/淨重：${productData.net_weight || productData.spec}
+完整規格：${productData.spec}
+保存期限：${productData.shelf_life}
+原產地：${productData.origin}
+劑型：${productData.form}
+食用方式/用法：${productData.serving}
+保存方式：${productData.storage}
+過敏原：${productData.allergens}
+注意事項：${productData.warnings}
+不適用族群：${productData.prohibited}
+全成分：${productData.ingredients}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+請逐一核查設計稿上的每個欄位是否與上述資料庫資料一致，若有不符請列為問題項目。` : '';
+
+  const systemPrompt = (productType === 'food' ? FOOD_PROMPT : COSMETIC_PROMPT) + `
+
+審查資訊：
+品牌：${brand || '未提供'}
+產品名稱：${productName || '未提供'}
+產品類型：${ptLabel}
+包裝類型：${pkgLabel}
+設計稿條碼：${bcVals.join('、') || '未提供'}
+${dupBc.length ? `⚠️ 重複條碼：${dupBc.join('、')}` : ''}
+${newBc.length ? `★ 新條碼（未在資料庫）：${newBc.join('、')}` : ''}
+${matchBc.length ? `✓ 已登記條碼：${matchBc.map(v => { const d = BARCODE_DB.find(x => x.barcode === v); return `${v}（${d.brand}｜${d.name}）`; }).join('、')}` : ''}
+${productDataBlock}
+
+請仔細分析圖片中可見的所有文字內容，逐一核對上述必要標示項目。
+
+回覆格式（只回JSON，不要有其他文字或markdown）：
+{
+  "summary": "整體評語（2句話）",
+  "score": "pass 或 warn 或 fail",
+  "issues": [
+    {
+      "level": "error 或 warn 或 ok 或 info",
+      "title": "問題標題",
+      "desc": "說明與建議（具體指出位置或文字）"
+    }
+  ]
+}`;
+
+  // Gemini API - 使用 vision
+  const imageBase64 = uploadedFiles[0].data.split(',')[1];
+  const mimeType = uploadedFiles[0].type;
+
+  const body = {
+    contents: [{
+      parts: [
+        { text: systemPrompt },
+        { inline_data: { mime_type: mimeType, data: imageBase64 } },
+        ...(uploadedFiles.slice(1).map(f => ({ inline_data: { mime_type: f.type, data: f.data.split(',')[1] } }))),
+        { text: '請審查以上包裝設計稿，回傳JSON格式審查報告。' }
+      ]
+    }],
+    generationConfig: { temperature: 0.2, maxOutputTokens: 2048 }
+  };
+
+  try {
+    const isNewKeyFormat = apiKey.startsWith("AQ.");
+    const apiUrl = isNewKeyFormat
+      ? `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`
+      : `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    const reqHeaders = { "Content-Type": "application/json" };
+    if (isNewKeyFormat) reqHeaders["x-goog-api-key"] = apiKey;
+    const resp = await fetch(apiUrl, { method: "POST", headers: reqHeaders, body: JSON.stringify(body) });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+    let text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    text = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(text);
+
+    // 注入條碼問題
+    if (dupBc.length) {
+      parsed.issues.unshift({ level: 'error', title: '條碼重複', desc: `條碼 ${dupBc.join('、')} 在同一份設計稿中重複出現，請確認各包裝使用獨立條碼。` });
+    }
+    if (newBc.length) {
+      parsed.issues.push({ level: 'warn', title: '新條碼未登記', desc: `${newBc.join('、')} 不在現有條碼資料庫中，請確認是否為正確的新品條碼，並更新登記。` });
+    }
+
+    allIssues = parsed.issues || [];
+    renderResults(parsed);
+  } catch (err) {
+    document.getElementById('resultSection').classList.remove('hidden');
+    allIssues = [{ level: 'error', title: '審查失敗', desc: err.message }];
+    renderResults({ summary: '審查過程發生錯誤，請確認 API Key 是否正確。', score: 'fail', issues: allIssues });
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '🔍 重新審查';
+}
+
+function renderResults(parsed) {
+  document.getElementById('resultSection').classList.remove('hidden');
+
+  const badge = document.getElementById('scoreBadge');
+  const scoreMap = { pass: ['✅ 符合規定', 'score-pass'], warn: ['⚠️ 需要修改', 'score-warn'], fail: ['🔴 有重大缺失', 'score-fail'] };
+  const [lbl, cls] = scoreMap[parsed.score] || ['未知', 'score-warn'];
+  badge.textContent = lbl; badge.className = `score-badge ${cls}`;
+
+  document.getElementById('resultSummary').textContent = parsed.summary;
+  document.getElementById('statError').textContent = allIssues.filter(i => i.level === 'error').length;
+  document.getElementById('statWarn').textContent = allIssues.filter(i => i.level === 'warn').length;
+  document.getElementById('statOk').textContent = allIssues.filter(i => i.level === 'ok').length;
+
+  filterIssues('all', document.querySelector('.filter-tab.active'));
+  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function filterIssues(type, tabEl) {
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  if (tabEl) tabEl.classList.add('active');
+  const filtered = type === 'all' ? allIssues : allIssues.filter(i => i.level === type);
+  const icons = { error: '🔴', warn: '⚠️', ok: '✅', info: 'ℹ️' };
+  const cls = { error: 'issue-error', warn: 'issue-warn', ok: 'issue-ok', info: 'issue-info' };
+  const list = document.getElementById('issueList');
+  if (!filtered.length) { list.innerHTML = '<div class="empty-state">此分類無項目</div>'; return; }
+  list.innerHTML = filtered.map(issue => `
+    <div class="issue-item ${cls[issue.level] || 'issue-info'}">
+      <div class="issue-icon">${icons[issue.level] || 'ℹ️'}</div>
+      <div><div class="issue-title">${issue.title}</div><div class="issue-desc">${issue.desc}</div></div>
+    </div>`).join('');
+}
+
+function approveDesign() {
+  const brand = document.getElementById('brandSelect').value;
+  const productName = document.getElementById('productName').value.trim();
+  const ptLabel = { food: '食品', cosmetic: '保養品／化粧品' }[document.getElementById('productType').value] || '';
+  const bcVals = Array.from(document.querySelectorAll('.bc-input')).map(i => i.value.trim()).filter(Boolean);
+  const record = {
+    id: Date.now(),
+    date: new Date().toLocaleString('zh-TW'),
+    brand, productName, type: ptLabel,
+    barcodes: bcVals,
+    summary: document.getElementById('resultSummary').textContent,
+    errors: allIssues.filter(i => i.level === 'error').length,
+    warns: allIssues.filter(i => i.level === 'warn').length,
+    issues: allIssues
+  };
+  approvedHistory.unshift(record);
+  localStorage.setItem('mars_approved', JSON.stringify(approvedHistory));
+  renderHistory();
+  alert(`✅ 已核准放行！\n產品：${brand} ${productName}\n紀錄已儲存至「核准紀錄」`);
+}
+
+function rejectDesign() {
+  if (confirm('確認退件？設計師需重新修改後再送審。')) {
+    alert('🔴 已退件。請將審查報告截圖後回覆設計師。');
+  }
+}
+
+// ── 資料庫 ──────────────────────────────────────────────────
+function renderDB() {
+  const q = document.getElementById('dbSearch').value.toLowerCase();
+  const filtered = BARCODE_DB.filter(d =>
+    d.barcode.includes(q) || d.brand.toLowerCase().includes(q) || d.name.toLowerCase().includes(q)
+  );
+  const isDiu = b => b.brand.toLowerCase().includes('diu');
+  document.getElementById('dbBody').innerHTML = filtered.map(d => `
+    <tr>
+      <td style="font-family:var(--mono);font-size:11px;">${d.barcode}</td>
+      <td>${isDiu(d) ? `<span class="tag-diu">${d.brand}</span>` : d.brand}</td>
+      <td>${d.name}</td>
+    </tr>`).join('');
+}
+renderDB();
+
+// ── 紀錄 ──────────────────────────────────────────────────
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  if (!approvedHistory.length) { list.innerHTML = '<div class="empty-state">尚無核准紀錄</div>'; return; }
+  list.innerHTML = approvedHistory.map(r => `
+    <div class="history-item">
+      <div>
+        <div style="font-size:13px;font-weight:600;">${r.brand} ${r.productName || ''} <span style="font-size:11px;font-weight:400;color:var(--text3);">${r.type}</span></div>
+        <div class="history-meta">${r.date}｜條碼：${r.barcodes.join('、') || '—'}｜修正 ${r.errors} 項・建議 ${r.warns} 項</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px;">${r.summary}</div>
+      </div>
+      <div class="history-actions">
+        <button class="btn-sm danger" onclick="deleteHistory(${r.id})">刪除</button>
+      </div>
+    </div>`).join('');
+}
+renderHistory();
+
+function deleteHistory(id) {
+  if (!confirm('確認刪除此紀錄？')) return;
+  approvedHistory = approvedHistory.filter(r => r.id !== id);
+  localStorage.setItem('mars_approved', JSON.stringify(approvedHistory));
+  renderHistory();
+}
+
+// ── UI 工具 ──────────────────────────────────────────────────
+function switchTab(name, el) {
+  document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(`tab-${name}`).classList.add('active');
+  if (name === 'database') renderDB();
+  if (name === 'history') renderHistory();
+}
+
+function toggleApiKey() {
+  const inp = document.getElementById('apiKey');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+// API Key 自動儲存
+document.getElementById('apiKey').addEventListener('change', e => {
+  sessionStorage.setItem('gemini_key', e.target.value);
+});
+const savedKey = sessionStorage.getItem('gemini_key');
+if (savedKey) document.getElementById('apiKey').value = savedKey;
+</script>
+</body>
+</html>

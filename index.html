@@ -149,7 +149,7 @@
   <div>
     <label class="form-label">Claude API Key</label>
     <div class="api-key-wrap">
-      <input type="password" id="apiKey" placeholder="sk-ant-..." value="">
+      <input type="password" id="apiKey" placeholder="sk-ant-..." value="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">
       <button class="api-eye" onclick="document.getElementById('apiKey').type=document.getElementById('apiKey').type==='password'?'text':'password'">👁</button>
     </div>
   </div>
@@ -160,7 +160,7 @@
       <div>
         <label class="form-label" style="margin-bottom:4px;">產品類型</label>
         <select id="productType">
-          <option value="">請選擇…</option>
+          <option value="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">請選擇…</option>
           <option value="food">食品／保健食品</option>
           <option value="cosmetic">保養品／化妝品</option>
         </select>
@@ -168,7 +168,7 @@
       <div>
         <label class="form-label" style="margin-bottom:4px;">包裝類型</label>
         <select id="pkgType">
-          <option value="">請選擇…</option>
+          <option value="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">請選擇…</option>
           <option value="box">彩盒</option>
           <option value="bottle">瓶器標籤</option>
           <option value="sticker">貼紙</option>
@@ -178,7 +178,7 @@
       <div>
         <label class="form-label" style="margin-bottom:4px;">品牌</label>
         <select id="brand">
-          <option value="">請選擇…</option>
+          <option value="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">請選擇…</option>
           <option value="Diu+">Diu+（丟丟）</option>
           <option value="大激賞">大激賞</option>
           <option value="SnowYOU">樹飛雪 SnowYOU</option>
@@ -815,16 +815,4 @@ function renderIssues() {
   document.getElementById('issueList').innerHTML = list.map(i => `
     <div class="issue-item ${i.level}">
       <div class="issue-dot"></div>
-      <div>
-        <div class="issue-title">${i.title}</div>
-        <div class="issue-desc">${i.desc}</div>
-      </div>
-    </div>`).join('') || '<div style="color:#aaa;font-size:13px;padding:8px 0">此分類沒有問題項目</div>';
-}
-
-// ── Init ──
-document.querySelector('.bc-input').addEventListener('input', e => updateBadge(e.target));
-document.getElementById('productName').addEventListener('input', showProductInfo);
-</script>
-</body>
-</html>
+     

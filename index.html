@@ -3,1095 +3,717 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>火星生技｜包裝合規審查系統</title>
+<title>火星生技 包裝合規審查系統</title>
 <style>
-  :root {
-    --bg: #F7F6F3;
-    --surface: #FFFFFF;
-    --surface2: #F0EEE9;
-    --border: #E2DDD5;
-    --border2: #C8C2B8;
-    --text: #1A1814;
-    --text2: #5C574F;
-    --text3: #9C9489;
-    --accent: #C1392B;
-    --accent-light: #FDF0EE;
-    --accent-border: #E8B0AA;
-    --warn: #B87A00;
-    --warn-light: #FDF8EC;
-    --warn-border: #E8D5A0;
-    --ok: #2E7D4F;
-    --ok-light: #EEF7F2;
-    --ok-border: #A8D5BC;
-    --info: #1A5FAD;
-    --info-light: #EEF4FC;
-    --info-border: #A8C8F0;
-    --font: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
-    --mono: 'SF Mono', 'Fira Code', monospace;
-    --radius: 10px;
-    --radius-sm: 6px;
-    --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-    --shadow-md: 0 4px 12px rgba(0,0,0,.08);
-  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; min-height: 100vh; }
-
-  /* Layout */
-  .app { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
-  .sidebar { background: var(--text); color: #E8E4DE; padding: 0; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-  .sidebar-header { padding: 28px 24px 20px; border-bottom: 1px solid rgba(255,255,255,.08); }
-  .sidebar-logo { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 8px; }
-  .sidebar-title { font-size: 17px; font-weight: 600; color: #fff; line-height: 1.3; }
-  .sidebar-subtitle { font-size: 12px; color: rgba(255,255,255,.35); margin-top: 4px; }
-  .sidebar-section { padding: 20px 24px; border-bottom: 1px solid rgba(255,255,255,.06); }
-  .sidebar-section-label { font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.3); margin-bottom: 12px; }
-  .sidebar select, .sidebar input[type=text], .sidebar input[type=password] {
-    width: 100%; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
-    color: #E8E4DE; border-radius: var(--radius-sm); padding: 8px 10px; font-size: 13px; font-family: var(--font);
-    outline: none; transition: border-color .15s;
+  :root {
+    --bg: #f5f3ef;
+    --sidebar: #1a1a1a;
+    --sidebar-text: #e8e4dc;
+    --sidebar-muted: #888;
+    --card: #ffffff;
+    --border: #e2ddd6;
+    --accent: #c0392b;
+    --accent2: #8B4513;
+    --text: #2c2c2c;
+    --text2: #666;
+    --ok: #27ae60;
+    --warn: #e67e22;
+    --error: #c0392b;
+    --info: #2980b9;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
   }
-  .sidebar select:focus, .sidebar input:focus { border-color: rgba(255,255,255,.3); }
-  .sidebar select option { background: #2A2620; }
-  .form-row { margin-bottom: 10px; }
-  .form-label { font-size: 11px; color: rgba(255,255,255,.4); margin-bottom: 5px; display: block; }
-  .api-key-row { position: relative; }
-  .api-key-row input { padding-right: 36px; }
-  .api-key-toggle { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; color: rgba(255,255,255,.3); cursor: pointer; font-size: 13px; padding: 2px; }
-  .sidebar-footer { margin-top: auto; padding: 16px 24px; font-size: 11px; color: rgba(255,255,255,.2); }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Noto Sans TC', sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
 
-  /* Main */
-  .main { padding: 32px 36px; max-width: 860px; }
-  .page-header { margin-bottom: 28px; }
-  .page-title { font-size: 22px; font-weight: 600; color: var(--text); }
-  .page-desc { font-size: 13px; color: var(--text2); margin-top: 4px; }
+  /* ── Sidebar ── */
+  .sidebar { width: 260px; min-width: 260px; background: var(--sidebar); color: var(--sidebar-text); display: flex; flex-direction: column; padding: 28px 20px; gap: 24px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+  .sidebar-brand { font-size: 11px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; font-weight: 600; }
+  .sidebar-title { font-size: 22px; font-weight: 700; line-height: 1.3; margin-top: 6px; }
+  .sidebar-sub { font-size: 11px; color: var(--sidebar-muted); margin-top: 4px; letter-spacing: 1px; }
+  .sidebar-divider { border: none; border-top: 1px solid #333; }
+  .form-label { font-size: 11px; color: var(--sidebar-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; display: block; }
+  .sidebar select, .sidebar input[type="text"], .sidebar input[type="password"] {
+    width: 100%; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; color: var(--sidebar-text);
+    padding: 8px 10px; font-size: 13px; outline: none; transition: border 0.2s;
+  }
+  .sidebar select:focus, .sidebar input:focus { border-color: var(--accent); }
+  .api-key-wrap { position: relative; }
+  .api-key-wrap input { padding-right: 36px; }
+  .api-eye { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--sidebar-muted); cursor: pointer; font-size: 14px; }
+  .sidebar-footer { font-size: 10px; color: #555; line-height: 1.7; margin-top: auto; border-top: 1px solid #2a2a2a; padding-top: 16px; }
 
-  /* Cards */
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 22px; margin-bottom: 16px; box-shadow: var(--shadow); }
-  .card-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 14px; display: flex; align-items: center; gap: 7px; }
-  .card-title-icon { width: 20px; height: 20px; background: var(--surface2); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+  /* ── Main ── */
+  .main { flex: 1; padding: 32px; max-width: 860px; display: flex; flex-direction: column; gap: 20px; }
+  .page-header { display: flex; align-items: center; gap: 12px; }
+  .page-header h1 { font-size: 20px; font-weight: 700; }
+  .page-header p { font-size: 13px; color: var(--text2); margin-top: 2px; }
 
-  /* Upload zone */
-  .upload-zone { border: 1.5px dashed var(--border2); border-radius: var(--radius); padding: 28px 20px; text-align: center; cursor: pointer; transition: all .15s; background: var(--surface2); }
-  .upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: var(--accent-light); }
-  .upload-icon { font-size: 28px; margin-bottom: 8px; opacity: .4; }
-  .upload-label { font-size: 14px; color: var(--text2); font-weight: 500; }
-  .upload-hint { font-size: 12px; color: var(--text3); margin-top: 4px; }
-  .file-input { display: none; }
+  /* ── Cards ── */
+  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--text2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
 
-  /* Preview grid */
-  .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 14px; }
-  .preview-item { position: relative; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
-  .preview-item img { width: 100%; height: 80px; object-fit: contain; display: block; padding: 4px; }
-  .preview-name { font-size: 10px; color: var(--text3); padding: 4px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-top: 1px solid var(--border); }
-  .preview-remove { position: absolute; top: 4px; right: 4px; width: 18px; height: 18px; background: rgba(0,0,0,.5); color: #fff; border: none; border-radius: 50%; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .15s; }
-  .preview-item:hover .preview-remove { opacity: 1; }
+  /* ── Upload ── */
+  .upload-zone { border: 2px dashed var(--border); border-radius: 8px; padding: 28px; text-align: center; cursor: pointer; transition: all 0.2s; }
+  .upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: #fdf9f5; }
+  .upload-zone input { display: none; }
+  .upload-icon { font-size: 32px; margin-bottom: 8px; }
+  .upload-text { font-size: 14px; color: var(--text2); }
+  .upload-sub { font-size: 12px; color: #aaa; margin-top: 4px; }
+  .preview-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  .preview-item { position: relative; width: 100px; height: 100px; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+  .preview-item img { width: 100%; height: 100%; object-fit: cover; }
+  .preview-item .remove-btn { position: absolute; top: 3px; right: 3px; background: rgba(0,0,0,0.6); color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .preview-label { font-size: 10px; color: var(--text2); text-align: center; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px; }
 
-  /* Barcode section */
-  .barcode-list { display: flex; flex-direction: column; gap: 8px; }
-  .barcode-row { display: flex; gap: 8px; align-items: center; }
-  .barcode-input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 10px; font-size: 13px; font-family: var(--mono); outline: none; color: var(--text); transition: border-color .15s; }
-  .barcode-input:focus { border-color: var(--border2); }
-  .barcode-status { font-size: 11px; padding: 3px 9px; border-radius: 20px; white-space: nowrap; font-weight: 500; }
-  .bc-ok { background: var(--ok-light); color: var(--ok); border: 1px solid var(--ok-border); }
-  .bc-dup { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); }
-  .bc-new { background: var(--info-light); color: var(--info); border: 1px solid var(--info-border); }
-  .bc-empty { background: var(--surface2); color: var(--text3); border: 1px solid var(--border); }
-  .bc-match { background: var(--warn-light); color: var(--warn); border: 1px solid var(--warn-border); }
-  .barcode-match-info { font-size: 11px; color: var(--text3); margin-top: 2px; padding-left: 2px; }
-  .btn-remove-bc { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 16px; padding: 2px 4px; line-height: 1; }
-  .btn-remove-bc:hover { color: var(--accent); }
-  .btn-add-bc { background: none; border: none; color: var(--info); font-size: 12px; cursor: pointer; padding: 4px 0; display: flex; align-items: center; gap: 4px; margin-top: 4px; }
-  .btn-add-bc:hover { opacity: .7; }
+  /* ── Barcode ── */
+  .bc-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .bc-row input { flex: 1; border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; font-size: 13px; outline: none; font-family: monospace; transition: border 0.2s; }
+  .bc-row input:focus { border-color: var(--accent); }
+  .bc-badge { font-size: 11px; padding: 2px 8px; border-radius: 12px; white-space: nowrap; }
+  .bc-badge.ok { background: #e8f5e9; color: var(--ok); }
+  .bc-badge.new { background: #fff3e0; color: var(--warn); }
+  .bc-badge.dup { background: #fce4e4; color: var(--error); }
+  .bc-badge.empty { background: #f0f0f0; color: #aaa; }
+  .bc-remove { background: none; border: none; color: #ccc; cursor: pointer; font-size: 16px; padding: 0 4px; }
+  .bc-remove:hover { color: var(--error); }
+  .add-bc-btn { font-size: 12px; color: var(--accent); background: none; border: none; cursor: pointer; padding: 4px 0; }
+  .add-bc-btn:hover { text-decoration: underline; }
 
-  /* Run button */
-  .run-btn { width: 100%; padding: 12px; font-size: 15px; font-weight: 600; background: var(--text); color: #fff; border: none; border-radius: var(--radius); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; letter-spacing: .02em; margin-top: 4px; }
-  .run-btn:hover { opacity: .88; }
-  .run-btn:disabled { opacity: .4; cursor: not-allowed; }
+  /* ── Product info card ── */
+  .product-table { width: 100%; font-size: 12px; border-collapse: collapse; }
+  .product-table td { padding: 5px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .product-table td:first-child { width: 80px; color: var(--text2); white-space: nowrap; }
+  .pill-red { color: var(--error); font-weight: 600; }
+  .pill-warn { color: var(--warn); }
 
-  /* Results */
-  .result-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 16px; box-shadow: var(--shadow-md); }
-  .result-header { padding: 16px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .result-title { font-size: 15px; font-weight: 600; }
-  .result-summary { font-size: 13px; color: var(--text2); padding: 14px 22px; border-bottom: 1px solid var(--border); line-height: 1.6; background: var(--surface2); }
-  .score-badge { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; }
-  .score-pass { background: var(--ok-light); color: var(--ok); border: 1px solid var(--ok-border); }
-  .score-warn { background: var(--warn-light); color: var(--warn); border: 1px solid var(--warn-border); }
-  .score-fail { background: var(--accent-light); color: var(--accent); border: 1px solid var(--accent-border); }
+  /* ── Run button ── */
+  .run-btn { width: 100%; padding: 14px; background: var(--sidebar); color: #fff; border: none; border-radius: var(--radius); font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
+  .run-btn:hover { background: #333; }
+  .run-btn:disabled { background: #aaa; cursor: not-allowed; }
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Stats row */
-  .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--border); }
-  .stat-item { padding: 14px 22px; text-align: center; border-right: 1px solid var(--border); }
-  .stat-item:last-child { border-right: none; }
-  .stat-num { font-size: 24px; font-weight: 700; line-height: 1; }
-  .stat-lbl { font-size: 11px; color: var(--text3); margin-top: 4px; }
-  .num-red { color: var(--accent); }
-  .num-amber { color: var(--warn); }
-  .num-green { color: var(--ok); }
+  /* ── Results ── */
+  .score-bar { display: flex; gap: 16px; margin-bottom: 16px; }
+  .score-box { flex: 1; text-align: center; padding: 14px; border-radius: 8px; }
+  .score-box .num { font-size: 28px; font-weight: 700; }
+  .score-box .lbl { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .score-box.error { background: #fce4e4; color: var(--error); }
+  .score-box.warn { background: #fff3e0; color: var(--warn); }
+  .score-box.ok { background: #e8f5e9; color: var(--ok); }
+  .score-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600; float: right; }
+  .score-badge.fail { background: #fce4e4; color: var(--error); }
+  .score-badge.warn { background: #fff3e0; color: var(--warn); }
+  .score-badge.pass { background: #e8f5e9; color: var(--ok); }
+  .summary-text { font-size: 14px; color: var(--text2); margin-bottom: 16px; line-height: 1.6; }
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .filter-btn { padding: 5px 14px; border-radius: 20px; border: 1px solid var(--border); background: #fff; font-size: 12px; cursor: pointer; transition: all 0.15s; }
+  .filter-btn.active { background: var(--sidebar); color: #fff; border-color: var(--sidebar); }
+  .issue-list { display: flex; flex-direction: column; gap: 10px; }
+  .issue-item { display: flex; gap: 12px; padding: 12px 14px; border-radius: 8px; border-left: 3px solid transparent; }
+  .issue-item.error { background: #fff5f5; border-color: var(--error); }
+  .issue-item.warn { background: #fffbf0; border-color: var(--warn); }
+  .issue-item.ok { background: #f0faf3; border-color: var(--ok); }
+  .issue-item.info { background: #f0f7ff; border-color: var(--info); }
+  .issue-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+  .error .issue-dot { background: var(--error); }
+  .warn .issue-dot { background: var(--warn); }
+  .ok .issue-dot { background: var(--ok); }
+  .info .issue-dot { background: var(--info); }
+  .issue-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .issue-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
 
-  /* Filter tabs */
-  .filter-tabs { display: flex; gap: 4px; padding: 12px 22px; border-bottom: 1px solid var(--border); background: var(--surface2); }
-  .filter-tab { font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; color: var(--text2); transition: all .15s; }
-  .filter-tab.active { background: var(--text); color: #fff; border-color: var(--text); }
-
-  /* Issue list */
-  .issue-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
-  .issue-item { border-radius: var(--radius-sm); padding: 11px 14px; display: flex; gap: 10px; }
-  .issue-error { background: var(--accent-light); border: 1px solid var(--accent-border); }
-  .issue-warn { background: var(--warn-light); border: 1px solid var(--warn-border); }
-  .issue-ok { background: var(--ok-light); border: 1px solid var(--ok-border); }
-  .issue-info { background: var(--info-light); border: 1px solid var(--info-border); }
-  .issue-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
-  .issue-error .issue-icon { color: var(--accent); }
-  .issue-warn .issue-icon { color: var(--warn); }
-  .issue-ok .issue-icon { color: var(--ok); }
-  .issue-info .issue-icon { color: var(--info); }
-  .issue-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
-  .issue-desc { font-size: 12px; color: var(--text2); line-height: 1.55; }
-
-  /* Approve section */
-  .approve-bar { padding: 14px 22px; background: var(--surface2); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-  .approve-note { font-size: 12px; color: var(--text3); flex: 1; }
-  .btn-approve { padding: 8px 20px; background: var(--ok); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity .15s; }
-  .btn-approve:hover { opacity: .85; }
-  .btn-reject { padding: 8px 20px; background: var(--surface); color: var(--accent); border: 1px solid var(--accent-border); border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity .15s; }
-  .btn-reject:hover { opacity: .8; }
-
-  /* DB viewer */
-  .db-search { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 10px; font-size: 13px; outline: none; color: var(--text); margin-bottom: 10px; }
-  .db-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .db-table th { background: var(--surface2); border: 1px solid var(--border); padding: 7px 10px; text-align: left; color: var(--text2); font-weight: 600; position: sticky; top: 0; }
-  .db-table td { border: 1px solid var(--border); padding: 6px 10px; color: var(--text); }
-  .db-table tr:hover td { background: var(--surface2); }
-  .db-wrap { max-height: 320px; overflow-y: auto; border-radius: var(--radius-sm); }
-  .tag-diu { background: #FDF0EE; color: var(--accent); border: 1px solid var(--accent-border); font-size: 10px; padding: 1px 6px; border-radius: 10px; }
-
-  /* Loading */
-  .loading-dots { display: inline-flex; gap: 3px; align-items: center; }
-  .loading-dots span { width: 5px; height: 5px; border-radius: 50%; background: currentColor; animation: ld 1.2s infinite; }
-  .loading-dots span:nth-child(2) { animation-delay: .2s; }
-  .loading-dots span:nth-child(3) { animation-delay: .4s; }
-  @keyframes ld { 0%,80%,100%{opacity:.25;transform:scale(.75)} 40%{opacity:1;transform:scale(1)} }
-
-  /* Section toggle */
-  .section-toggle { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
-  .toggle-arrow { font-size: 11px; color: var(--text3); transition: transform .2s; }
-  .toggle-arrow.open { transform: rotate(180deg); }
-
-  /* Tabs for main sections */
-  .main-tabs { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
-  .main-tab { font-size: 13px; font-weight: 500; padding: 10px 18px; cursor: pointer; color: var(--text3); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; background: none; border-top: none; border-left: none; border-right: none; }
-  .main-tab.active { color: var(--text); border-bottom-color: var(--text); }
-  .main-tab:hover { color: var(--text2); }
-  .tab-panel { display: none; }
-  .tab-panel.active { display: block; }
-
-  /* History */
-  .history-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; }
-  .history-meta { font-size: 11px; color: var(--text3); margin-top: 3px; }
-  .history-actions { display: flex; gap: 6px; }
-  .btn-sm { font-size: 11px; padding: 4px 10px; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid var(--border); background: var(--surface2); color: var(--text2); transition: all .15s; }
-  .btn-sm:hover { border-color: var(--border2); }
-  .btn-sm.danger { color: var(--accent); border-color: var(--accent-border); background: var(--accent-light); }
-
-  .product-info-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  .product-info-table td { padding: 5px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
-  .product-info-table td:first-child { width: 90px; color: var(--text3); white-space: nowrap; }
-  .product-info-table td:last-child { color: var(--text); }
-  .product-info-allergen { color: var(--accent); font-weight: 600; }
-  .product-info-warn { color: var(--warn); }
+  /* ── Bottom actions ── */
+  .action-bar { display: flex; justify-content: flex-end; gap: 10px; padding-top: 4px; }
+  .btn-reject { padding: 9px 20px; border-radius: 8px; border: 1px solid var(--error); color: var(--error); background: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-approve { padding: 9px 20px; border-radius: 8px; border: none; background: var(--ok); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-reject:hover { background: #fce4e4; }
+  .btn-approve:hover { background: #219a52; }
 
   .hidden { display: none; }
-  .empty-state { text-align: center; padding: 40px 20px; color: var(--text3); font-size: 13px; }
-
-  @media (max-width: 768px) {
-    .app { grid-template-columns: 1fr; }
-    .sidebar { position: static; height: auto; }
-    .main { padding: 20px 16px; }
-  }
 </style>
 </head>
 <body>
-<div class="app">
 
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-header">
-    <div class="sidebar-logo">火星生技 Mars Biotech</div>
+<!-- ── Sidebar ── -->
+<div class="sidebar">
+  <div>
+    <div class="sidebar-brand">火星生技 MARS BIOTECH</div>
     <div class="sidebar-title">包裝合規<br>審查系統</div>
-    <div class="sidebar-subtitle">Packaging Compliance Checker</div>
+    <div class="sidebar-sub">Packaging Compliance Checker</div>
   </div>
 
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">API 設定</div>
-    <div class="form-row">
-      <label class="form-label">Claude API Key</label>
-      <div class="api-key-row">
-        <input type="password" id="apiKey" placeholder="sk-ant-..." autocomplete="off" value="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" />
-        <button class="api-key-toggle" onclick="toggleApiKey()" title="顯示/隱藏">👁</button>
+  <hr class="sidebar-divider">
+
+  <div>
+    <label class="form-label">Claude API Key</label>
+    <div class="api-key-wrap">
+      <input type="password" id="apiKey" placeholder="sk-ant-..." value="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">
+      <button class="api-eye" onclick="document.getElementById('apiKey').type=document.getElementById('apiKey').type==='password'?'text':'password'">👁</button>
+    </div>
+  </div>
+
+  <div>
+    <label class="form-label">審查設定</label>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div>
+        <label class="form-label" style="margin-bottom:4px;">產品類型</label>
+        <select id="productType">
+          <option value="">請選擇…</option>
+          <option value="food">食品／保健食品</option>
+          <option value="cosmetic">保養品／化妝品</option>
+        </select>
       </div>
-    </div>
-  </div>
-
-  <div class="sidebar-section">
-    <div class="sidebar-section-label">審查設定</div>
-    <div class="form-row">
-      <label class="form-label">產品類型</label>
-      <select id="productType">
-        <option value="">請選擇…</option>
-        <option value="food">食品</option>
-        <option value="cosmetic">保養品／化粧品</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <label class="form-label">包裝類型</label>
-      <select id="packagingType">
-        <option value="">請選擇…</option>
-        <option value="alubag">鋁袋／鋁包</option>
-        <option value="outerbox">外盒</option>
-        <option value="label">瓶貼／標籤</option>
-        <option value="bottle">瓶身</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <label class="form-label">品牌</label>
-      <select id="brandSelect">
-        <option value="">請選擇…</option>
-        <option value="Diu+">Diu+（丟丟）</option>
-        <option value="SnowYOU">SnowYOU（樹飛雪）</option>
-        <option value="大激賞">大激賞</option>
-        <option value="火星生技">火星生技</option>
-        <option value="other">其他</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <label class="form-label">產品名稱（選填）</label>
-      <input type="text" id="productName" placeholder="例：Clean Coffee" />
+      <div>
+        <label class="form-label" style="margin-bottom:4px;">包裝類型</label>
+        <select id="pkgType">
+          <option value="">請選擇…</option>
+          <option value="box">彩盒</option>
+          <option value="bottle">瓶器標籤</option>
+          <option value="sticker">貼紙</option>
+          <option value="pouch">袋裝</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label" style="margin-bottom:4px;">品牌</label>
+        <select id="brand">
+          <option value="">請選擇…</option>
+          <option value="Diu+">Diu+（丟丟）</option>
+          <option value="大激賞">大激賞</option>
+          <option value="SnowYOU">樹飛雪 SnowYOU</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label" style="margin-bottom:4px;">產品名稱（選填）</label>
+        <input type="text" id="productName" placeholder="例：Clean Coffee">
+      </div>
     </div>
   </div>
 
   <div class="sidebar-footer">
-    條碼資料庫：288 筆｜Diu+ 19 筆<br>
-    產品資料庫：26 筆（Diu+／大激賞／樹飛雪）<br>
+    條碼資料庫：288 筆<br>
+    產品資料庫：Diu+／大激賞／樹飛雪<br>
     法規依據：食安法第22條、化粧品衛生安全管理法第7條
   </div>
-</aside>
+</div>
 
-<!-- MAIN -->
-<main class="main">
+<!-- ── Main ── -->
+<div class="main">
+
   <div class="page-header">
-    <div class="page-title">新稿審查</div>
-    <div class="page-desc">上傳設計稿，AI 依台灣法規與條碼資料庫自動審查，完成後核准或退件</div>
+    <div>
+      <h1>🔍 新稿審查</h1>
+      <p>上傳設計稿，AI 依台灣法規與產品資料庫自動審查，完成後核准或退件</p>
+    </div>
   </div>
 
-  <div class="main-tabs">
-    <button class="main-tab active" onclick="switchTab('review', this)">📋 審查</button>
-    <button class="main-tab" onclick="switchTab('database', this)">🗄 條碼資料庫</button>
-    <button class="main-tab" onclick="switchTab('history', this)">📁 核准紀錄</button>
+  <!-- Upload -->
+  <div class="card">
+    <div class="card-title">📁 上傳設計稿</div>
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="fileInput" accept="image/*" multiple>
+      <div class="upload-icon">🖼</div>
+      <div class="upload-text">拖曳設計圖至此，或點擊上傳</div>
+      <div class="upload-sub">支援 JPG、PNG，每次最多 5 張</div>
+    </div>
+    <div class="preview-grid" id="previewGrid"></div>
   </div>
 
-  <!-- REVIEW TAB -->
-  <div class="tab-panel active" id="tab-review">
-
-    <!-- Upload -->
-    <div class="card">
-      <div class="card-title"><span class="card-title-icon">🖼</span>上傳設計稿</div>
-      <div class="upload-zone" id="uploadZone">
-        <div class="upload-icon">⬆️</div>
-        <div class="upload-label">拖曳設計圖至此，或點擊上傳</div>
-        <div class="upload-hint">支援 JPG、PNG，每次最多 5 張</div>
-        <input type="file" class="file-input" id="fileInput" accept="image/*" multiple />
-      </div>
-      <div class="preview-grid" id="previewGrid"></div>
-    </div>
-
-    <!-- Barcode -->
-    <div class="card">
-      <div class="card-title"><span class="card-title-icon">📊</span>條碼登記與比對</div>
-      <div class="barcode-list" id="barcodeList">
-        <div class="barcode-row" data-idx="0">
-          <input type="text" class="barcode-input bc-input" placeholder="輸入設計稿上的條碼號碼（EAN-13）" maxlength="20" />
-          <span class="barcode-status bc-empty">未填寫</span>
-        </div>
-      </div>
-      <div id="barcodeMatchInfo"></div>
-      <button class="btn-add-bc" onclick="addBarcodeRow()">＋ 新增條碼</button>
-    </div>
-
-    <!-- Product Info Preview -->
-    <div class="card" id="productInfoCard" style="display:none;">
-      <div class="card-title"><span class="card-title-icon">📋</span>產品資料庫資料 <span style="font-size:11px;font-weight:400;color:var(--text3);margin-left:4px;">自動帶入，供 AI 對照審查</span></div>
-      <div id="productInfoContent"></div>
-    </div>
-
-    <!-- Run -->
-    <button class="run-btn" id="runBtn" onclick="runCheck()">
-      🔍 開始 AI 合規審查
-    </button>
-
-    <!-- Results -->
-    <div id="resultSection" class="hidden">
-      <div class="result-card">
-        <div class="result-header">
-          <div class="result-title">審查報告</div>
-          <span class="score-badge" id="scoreBadge">—</span>
-        </div>
-        <div class="result-summary" id="resultSummary"></div>
-        <div class="stats-row">
-          <div class="stat-item"><div class="stat-num num-red" id="statError">0</div><div class="stat-lbl">必須修正</div></div>
-          <div class="stat-item"><div class="stat-num num-amber" id="statWarn">0</div><div class="stat-lbl">建議修改</div></div>
-          <div class="stat-item"><div class="stat-num num-green" id="statOk">0</div><div class="stat-lbl">符合規定</div></div>
-        </div>
-        <div class="filter-tabs">
-          <button class="filter-tab active" onclick="filterIssues('all',this)">全部</button>
-          <button class="filter-tab" onclick="filterIssues('error',this)">必須修正</button>
-          <button class="filter-tab" onclick="filterIssues('warn',this)">建議修改</button>
-          <button class="filter-tab" onclick="filterIssues('ok',this)">符合規定</button>
-        </div>
-        <div class="issue-list" id="issueList"></div>
-        <div class="approve-bar">
-          <div class="approve-note">審查完成後，請確認所有必修項目均已處理，再核准放行</div>
-          <button class="btn-reject" onclick="rejectDesign()">🔴 退件修改</button>
-          <button class="btn-approve" onclick="approveDesign()">✅ 核准放行</button>
-        </div>
+  <!-- Barcode -->
+  <div class="card">
+    <div class="card-title">📊 條碼登記與比對</div>
+    <div id="bcList">
+      <div class="bc-row">
+        <input type="text" class="bc-input" placeholder="輸入設計稿上的條碼號碼（EAN-13）" maxlength="20">
+        <span class="bc-badge empty">未填寫</span>
       </div>
     </div>
-
+    <button class="add-bc-btn" onclick="addBarcodeRow()">＋ 新增條碼</button>
   </div>
 
-  <!-- DATABASE TAB -->
-  <div class="tab-panel" id="tab-database">
-    <div class="card">
-      <div class="card-title"><span class="card-title-icon">🗄</span>條碼資料庫 <span style="font-size:11px;font-weight:400;color:var(--text3);margin-left:4px;">288 筆｜4719881 前綴</span></div>
-      <input type="text" class="db-search" id="dbSearch" placeholder="搜尋品牌、產品名稱或條碼…" oninput="renderDB()" />
-      <div class="db-wrap">
-        <table class="db-table">
-          <thead><tr><th>條碼</th><th>品牌</th><th>產品名稱</th></tr></thead>
-          <tbody id="dbBody"></tbody>
-        </table>
-      </div>
+  <!-- Product info (auto) -->
+  <div class="card hidden" id="productInfoCard">
+    <div class="card-title">📋 產品資料庫比對 <span style="font-size:11px;font-weight:400;color:#aaa;margin-left:6px;">供 AI 對照審查用</span></div>
+    <div id="productInfoContent"></div>
+  </div>
+
+  <!-- Run -->
+  <button class="run-btn" id="runBtn" onclick="runCheck()">
+    🔍 開始 AI 合規審查
+  </button>
+
+  <!-- Results -->
+  <div class="card hidden" id="resultSection">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="card-title" style="margin:0">審查報告</div>
+      <span class="score-badge" id="scoreBadge"></span>
     </div>
+    <div class="score-bar" id="scoreBar"></div>
+    <div class="summary-text" id="summaryText"></div>
+    <div class="filter-bar" id="filterBar"></div>
+    <div class="issue-list" id="issueList"></div>
   </div>
 
-  <!-- HISTORY TAB -->
-  <div class="tab-panel" id="tab-history">
-    <div class="card">
-      <div class="card-title"><span class="card-title-icon">📁</span>核准紀錄</div>
-      <div id="historyList"><div class="empty-state">尚無核准紀錄</div></div>
-    </div>
+  <!-- Action -->
+  <div class="action-bar hidden" id="actionBar">
+    <button class="btn-reject" onclick="alert('已標記為退件修改，請修正後重新送審。')">🔴 退件修改</button>
+    <button class="btn-approve" onclick="alert('已核准放行！')">✅ 核准放行</button>
   </div>
 
-</main>
 </div>
 
 <script>
-// ── 條碼資料庫 ──────────────────────────────────────────────
+// ══════════════════════════════════════════════
+// 條碼資料庫（節選，可繼續新增）
+// ══════════════════════════════════════════════
 const BARCODE_DB = [
-  { barcode: "4719881100018", brand: "TAIZAKU 煋宇生技", name: "赤晶對策 EX" },
-  { barcode: "4719881100025", brand: "TAIZAKU 煋宇生技", name: "赤晶對策 EX 隨身包" },
-  { barcode: "4719881100032", brand: "TAIZAKU 煋宇生技", name: "赤晶對策GOLD" },
-  { barcode: "4719881100049", brand: "TAIZAKU 煋宇生技", name: "赤晶對策 EX 3入組" },
-  { barcode: "4719881100056", brand: "TAIZAKU 煋宇生技", name: "赤晶對策 EX 6入組" },
-  { barcode: "4719881100063", brand: "TAIZAKU 煋宇生技", name: "明守對策 - 葉黃素24h日夜錠" },
-  { barcode: "4719881100070", brand: "TAIZAKU 煋宇生技", name: "明守對策 日守錠" },
-  { barcode: "4719881100087", brand: "TAIZAKU 煋宇生技", name: "明守對策 夜休錠" },
-  { barcode: "4719881100094", brand: "TAIZAKU 煋宇生技", name: "赤晶對策 EX 隨身包7日組" },
-  { barcode: "4719881100216", brand: "勸BUY密會所", name: "宮崎Ａ5和牛菲力牛排500克" },
-  { barcode: "4719881100223", brand: "勸BUY密會所", name: "宮崎Ａ5和牛菲力牛排350克" },
-  { barcode: "4719881100230", brand: "勸BUY密會所", name: "宮崎Ａ5和牛菲力燒肉片350克" },
-  { barcode: "4719881100247", brand: "勸BUY密會所", name: "宮崎Ａ5和牛莎朗牛排350克" },
-  { barcode: "4719881100254", brand: "勸BUY密會所", name: "宮崎Ａ5和牛莎朗牛排250克" },
-  { barcode: "4719881100261", brand: "勸BUY密會所", name: "宮崎Ａ5和牛莎朗燒肉片250克" },
-  { barcode: "4719881100278", brand: "勸BUY密會所", name: "宮崎Ａ5紐約客牛排400克" },
-  { barcode: "4719881100285", brand: "勸BUY密會所", name: "宮崎Ａ5紐約客燒肉片250克" },
-  { barcode: "4719881100292", brand: "勸BUY密會所", name: "宮崎Ａ5肋眼牛排400克" },
-  { barcode: "4719881100308", brand: "勸BUY密會所", name: "宮崎Ａ5肋眼火鍋肉片250克" },
-  { barcode: "4719881100315", brand: "勸BUY密會所", name: "宮崎Ａ4板腱牛排500克" },
-  { barcode: "4719881100322", brand: "勸BUY密會所", name: "宮崎Ａ4板腱燒肉片250克" },
-  { barcode: "4719881100339", brand: "TAIZAKU 煋宇生技", name: "赤晶对策 EX 压片糖果" },
-  { barcode: "4719881100391", brand: "TAIZAKU 煋宇生技", name: "武倍對策" },
-  { barcode: "4719881100407", brand: "TAIZAKU 煋宇生技", name: "武倍對策隨身包" },
-  { barcode: "4719881100483", brand: "TAIZAKU 煋宇生技", name: "赤晶對策痛風膠囊" },
-  { barcode: "4719881100490", brand: "TAIZAKU 煋宇生技", name: "武倍十攝" },
-  { barcode: "4719881100537", brand: "TAIZAKU 煋宇生技", name: "武倍對策GOLD" },
-  { barcode: "4719881100551", brand: "煋宇生技", name: "武倍對策Gold隨身包" },
-  { barcode: "4719881100612", brand: "火星生技", name: "武倍魚油" },
-  { barcode: "4719881100636", brand: "OL營養所", name: "舒植養益菌噴霧" },
-  { barcode: "4719881100643", brand: "OL營養所", name: "舒植養益生菌" },
-  { barcode: "4719881100650", brand: "OL營養所", name: "極萃光" },
-  { barcode: "4719881100674", brand: "Taizaku", name: "武倍魚油隨身包" },
-  { barcode: "4719881100681", brand: "Taizaku", name: "赤晶對策隨身包兩入組" },
-  { barcode: "4719881100698", brand: "Taizaku", name: "武倍對策隨身包兩入組" },
-  { barcode: "4719881100759", brand: "藥師健生活", name: "兒童益生菌-鯊魚寶寶聯名款" },
-  { barcode: "4719881100766", brand: "藥師健生活", name: "非活性維生素D3" },
-  { barcode: "4719881100773", brand: "藥師健生活", name: "兒童小魚球" },
-  { barcode: "4719881100858", brand: "藥師健生活", name: "樂密女性益生菌" },
-  { barcode: "4719881100933", brand: "藥師健生活", name: "Pharcute免疫力保健粉" },
-  { barcode: "4719881100940", brand: "藥師健生活", name: "Pharcute UC-II關節保養粉" },
-  { barcode: "4719881100957", brand: "藥師健生活", name: "Pharcute 皮膚益生菌" },
-  { barcode: "4719881101060", brand: "藥師健生活", name: "EPA高純度魚油(EE700)" },
-  { barcode: "4719881101077", brand: "Taizaku", name: "決醒對策 B群" },
-  { barcode: "4719881101176", brand: "Inyouso", name: "極萃光日月初生精華" },
-  { barcode: "4719881101183", brand: "Taizaku", name: "決醒對策B群 隨身包" },
-  { barcode: "4719881101244", brand: "藥師健生活", name: "碰碰狐鯊魚寶寶 400IU 維生素D3" },
-  { barcode: "4719881101251", brand: "藥師健生活", name: "碰碰狐鯊魚寶寶 兒童鈣鎂成長配方" },
-  { barcode: "4719881101442", brand: "Taizaku", name: "武倍對策：7日份" },
-  { barcode: "4719881101459", brand: "Taizaku", name: "武倍魚油：7日份" },
-  { barcode: "4719881101466", brand: "Taizaku", name: "赤晶ＥＸ：7日份" },
-  { barcode: "4719881101473", brand: "Taizaku", name: "決醒B群：7日份" },
-  { barcode: "4719881101480", brand: "Taizaku", name: "明守對策：8日份" },
-  { barcode: "4719881101664", brand: "Taizaku", name: "斬宿薑皇EX" },
-  { barcode: "4719881101671", brand: "Taizaku", name: "武倍威剛" },
-  { barcode: "4719881101688", brand: "Inyouso", name: "極淨初心胺基酸潔顏霜" },
-  { barcode: "4719881101725", brand: "藥師健生活", name: "兒童葡聚多醣" },
-  { barcode: "4719881101756", brand: "Taizaku", name: "斬宿薑皇EX隨身包" },
-  { barcode: "4719881101831", brand: "藥師健生活", name: "兒童小魚油" },
-  { barcode: "4719881101992", brand: "藥師健生活", name: "天然酵母鋅" },
-  { barcode: "4719881102067", brand: "藥師健生活", name: "卵磷脂-粉劑" },
-  { barcode: "4719881102074", brand: "藥師健生活", name: "葉酸" },
-  { barcode: "4719881102081", brand: "藥師健生活", name: "Pharmama鐵" },
-  { barcode: "4719881102098", brand: "藥師健生活", name: "藻油" },
-  { barcode: "4719881102104", brand: "Taizaku", name: "GREENX進化乳清蛋白-義式深焙" },
-  { barcode: "4719881102128", brand: "Taizaku", name: "GREENX進化乳清蛋白-醇黑可可" },
-  { barcode: "4719881102142", brand: "Inyouso", name: "極光純植膠原萃" },
-  { barcode: "4719881102296", brand: "Inyouso", name: "營養所 維生素C" },
-  { barcode: "4719881102302", brand: "Inyouso", name: "營養所 D3K2" },
-  { barcode: "4719881102319", brand: "Inyouso", name: "營養所 鎂" },
-  { barcode: "4719881102326", brand: "Inyouso", name: "營養所 蔓越莓甘露糖" },
-  { barcode: "4719881102333", brand: "Inyouso", name: "營養所 維生素B群" },
-  { barcode: "4719881102340", brand: "Inyouso", name: "營養所 鐵" },
-  { barcode: "4719881102357", brand: "Taizaku", name: "武倍健法" },
-  { barcode: "4719881102364", brand: "Taizaku", name: "赤晶對策EX Pharma+ 藥師監製版" },
-  { barcode: "4719881102371", brand: "Taizaku", name: "武倍對策 Pharma+ 藥師監製版" },
-  { barcode: "4719881102456", brand: "Inyouso", name: "薑黃" },
-  { barcode: "4719881102463", brand: "Inyouso", name: "瑪卡" },
-  { barcode: "4719881102470", brand: "新悠雀", name: "猛孅GLPro雙艙" },
-  { barcode: "4719881102487", brand: "Taizaku火星生技", name: "武倍對策 BLACK GOLD" },
-  { barcode: "4719881102494", brand: "Taizaku火星生技", name: "赤晶對策 BLACK GOLD" },
-  { barcode: "4719881102500", brand: "Taizaku火星生技", name: "武倍魚油 BLACK GOLD" },
-  { barcode: "4719881102517", brand: "Inyouso", name: "營養所 硒" },
-  { barcode: "4719881102524", brand: "Inyouso", name: "營養所 苦瓜胜肽" },
-  { barcode: "4719881102531", brand: "Inyouso", name: "營養所 鋅" },
-  { barcode: "4719881102579", brand: "黛后", name: "dr.hold黛后 絲蛋白超能抗皺精華" },
-  { barcode: "4719881102586", brand: "黛后", name: "dr.hold黛后 激光亮白精華" },
-  { barcode: "4719881102593", brand: "黛后", name: "dr.hold黛后 賦活保濕緊緻霜" },
-  { barcode: "4719881102616", brand: "火星生技", name: "武倍對策 TECH+ 科技研製版" },
-  { barcode: "4719881102623", brand: "瑞丹絲", name: "玫瑰香緊緻潤澤凝膠30ml" },
-  { barcode: "4719881102647", brand: "黛后", name: "皇后私密專用緊實潤澤凝膠 30ml" },
+  // Diu+
   { barcode: "4719881102708", brand: "Diu+", name: "Clean Coffee" },
-  { barcode: "4719881102715", brand: "Diu+", name: "飽包(可可)" },
-  { barcode: "4719881102722", brand: "Diu+", name: "飽包(香蕉)" },
-  { barcode: "4719881102739", brand: "Diu+", name: "飽包(奶茶)" },
+  { barcode: "4719881102715", brand: "Diu+", name: "飽包（可可）" },
+  { barcode: "4719881102722", brand: "Diu+", name: "飽包（香蕉）" },
+  { barcode: "4719881102739", brand: "Diu+", name: "飽包（奶茶）" },
   { barcode: "4719881102746", brand: "Diu+", name: "明守對策" },
   { barcode: "4719881102753", brand: "Diu+", name: "大餐防守對策" },
   { barcode: "4719881102760", brand: "Diu+", name: "孅孅凍" },
   { barcode: "4719881102777", brand: "Diu+", name: "雙艙仙女飲" },
   { barcode: "4719881102784", brand: "Diu+", name: "雙艙守宮飲" },
   { barcode: "4719881102791", brand: "Diu+", name: "膠妍粉" },
-  { barcode: "4719881102814", brand: "Diu+", name: "康普茶升級版(熱帶水果)" },
-  { barcode: "4719881102821", brand: "Diu+", name: "康普茶升級版(麝香葡萄)" },
-  { barcode: "4719881102838", brand: "Diu+", name: "康普茶升級版(鳳梨蘋果)" },
-  { barcode: "4719881102876", brand: "Diu+", name: "藤黃果洛神茶(升級版)" },
-  { barcode: "4719881102883", brand: "Diu+", name: "藤黃果金麥茶(升級版)" },
-  { barcode: "4719881102890", brand: "Diu+", name: "藤黃果水蜜桃茶(升級版)" },
-  { barcode: "4719881102944", brand: "Diu+", name: "兒童魚油" },
-  { barcode: "4719881102951", brand: "Diu+", name: "兒童成長鈣" },
-  { barcode: "4719881102968", brand: "Diu+", name: "兒童益生菌" },
-  { barcode: "4719881102975", brand: "inyouso", name: "葉黃素魚油" },
-  { barcode: "4719881102982", brand: "inyouso", name: "兒童成長鈣" },
-  { barcode: "4719881102999", brand: "inyouso", name: "兒童葡聚醣益生菌" },
-  { barcode: "4719881102906", brand: "inyouso", name: "營養所 鈣" },
-  { barcode: "4719881102920", brand: "inyouso", name: "營養所 EPA魚油" },
-  { barcode: "4719881102937", brand: "Dr.Hold", name: "私密花園專用除草霜" }
+  { barcode: "4719881102814", brand: "Diu+", name: "康普茶（熱帶水果）" },
+  { barcode: "4719881102821", brand: "Diu+", name: "康普茶（麝香葡萄）" },
+  { barcode: "4719881102838", brand: "Diu+", name: "康普茶（蘋果鳳梨）" },
+  { barcode: "4719881102876", brand: "Diu+", name: "藤黃果洛神茶" },
+  { barcode: "4719881102883", brand: "Diu+", name: "藤黃果金麥茶" },
+  { barcode: "4719881102890", brand: "Diu+", name: "藤黃果水蜜桃茶" },
+  { barcode: "4719881102906", brand: "Diu+", name: "玫瑰孅孅飲" },
+  { barcode: "4719881102913", brand: "Diu+", name: "咕嚕咕嚕超纖酵素（鳳梨）" },
+  { barcode: "4719881102920", brand: "Diu+", name: "咕嚕咕嚕超纖酵素（莓果）" },
 ];
 
-// ── 產品資料庫（成分、規格、注意事項）──────────────────────────────
+// ══════════════════════════════════════════════
+// 產品資料庫
+// ══════════════════════════════════════════════
 const PRODUCT_DB = [
-  // ── Diu+ 保健食品 ──────────────────────────────────────────
-  {
-    brand: "Diu+", name: "Clean Coffee",
-    barcode: "4719881102708",
-    type: "food", category: "保健食品", form: "液態飲",
-    spec: "15ml/包", shelf_life: "2年", origin: "台灣",
-    net_weight: "15ml",
-    ingredients: "水、咖啡萃取液（水、研磨咖啡粉）、專利難消化性麥芽糊精、咖啡粉、藤黃果萃取物、關華豆膠、白腎豆萃取物、專利毛喉鞘蕊花萃取物（毛喉鞘蕊花萃取物、麥芽糊精）",
-    allergens: "無常見過敏原",
-    warnings: "含咖啡因（約150mg/包），咖啡因敏感者、心悸或失眠體質需注意；孕婦與哺乳中建議先諮詢醫師；兒童不建議；心臟病患者注意",
-    storage: "陰涼乾燥處",
-    serving: "每日1次，每次1包",
-    prohibited: "孕婦需評估、兒童不建議、咖啡因敏感者"
-  },
-  {
-    brand: "Diu+", name: "飽包（可可）",
-    barcode: "4719881102715",
-    type: "food", category: "保健食品", form: "粉末",
-    spec: "40g/包", shelf_life: "18個月", origin: "台灣",
-    net_weight: "40g",
-    ingredients: "豌豆蛋白、大豆蛋白、植物油粉、異麥芽寡糖、砂糖、可可粉、綜合穀物可可球、麥芽糊精、香料、二氧化矽、綜合維生素、綜合礦物質、食鹽、蔗糖素（甜味劑）",
-    allergens: "大豆、牛奶、堅果、含麩質穀物及其製品",
-    warnings: "含大豆、牛奶、堅果、含麩質穀物及其製品，不適合過敏體質者食用；特殊體質者建議諮詢醫師",
-    storage: "陰涼乾燥處，開封後盡速食用",
-    serving: "每日1包，沖泡180ml水",
-    prohibited: "大豆/牛奶/麩質/堅果過敏者"
-  },
-  {
-    brand: "Diu+", name: "飽包（香蕉）",
-    barcode: "4719881102722",
-    type: "food", category: "保健食品", form: "粉末",
-    spec: "40g/包", shelf_life: "18個月", origin: "台灣",
-    net_weight: "40g",
-    ingredients: "豌豆蛋白、大豆蛋白、植物油粉、異麥芽寡糖、砂糖、香蕉果汁粉、麥芽糊精、綜合穀物可可球、香料、二氧化矽、綜合維生素、綜合礦物質、蔗糖素（甜味劑）",
-    allergens: "大豆、牛奶、堅果、含麩質穀物及其製品",
-    warnings: "含大豆、牛奶、堅果、含麩質穀物及其製品，不適合過敏體質者食用；特殊體質者建議諮詢醫師",
-    storage: "陰涼乾燥處，開封後盡速食用",
-    serving: "每日1包，沖泡180ml水",
-    prohibited: "大豆/牛奶/麩質/堅果過敏者"
-  },
-  {
-    brand: "Diu+", name: "飽包（奶茶）",
-    barcode: "4719881102739",
-    type: "food", category: "保健食品", form: "粉末",
-    spec: "40g/包", shelf_life: "18個月", origin: "台灣",
-    net_weight: "40g",
-    ingredients: "植物蛋白（豌豆蛋白、大豆蛋白）、植物油粉、砂糖、異麥芽寡糖、烏龍茶粉、香料、可可球、麥芽糊精、綜合維生素、綜合礦物質、食鹽、蔗糖素（甜味劑）",
-    allergens: "大豆、牛奶、堅果、含麩質穀物及其製品",
-    warnings: "含大豆、牛奶、堅果、含麩質穀物及其製品，不適合過敏體質者食用；特殊體質者建議諮詢醫師",
-    storage: "陰涼乾燥處，開封後盡速食用",
-    serving: "每日1包，沖泡180ml水",
-    prohibited: "大豆/牛奶/麩質/堅果過敏者"
-  },
-  {
-    brand: "Diu+", name: "明守對策",
-    barcode: "4719881102746",
-    type: "food", category: "保健食品", form: "膠囊",
-    spec: "日劑0.8g×20粒＋夜劑0.6g×20粒，共40入/盒", shelf_life: "2年", origin: "台灣",
-    net_weight: "日劑0.8g/粒，夜劑0.6g/粒",
-    ingredients: "【日劑】亞麻仁油、金盞花萃取物、DHA藻油、葡萄糖酸鋅、α醣化橙皮苷、酵母硒、維生素E、南薑萃取物、維生素B6、B1、B2、維生素A（含花生油）、葉酸、維生素B12；【夜劑】麥芽糊精、山桑子萃取物、金盞花萃取物、α醣化橙皮苷、流行鏈球菌發酵物（含透明質酸鈉）、二氧化矽、維生素E、葉酸、維生素A",
-    allergens: "⚠️ 含花生製品（日劑含花生油）",
-    warnings: "含花生製品，花生過敏者禁用；12歲以下不建議；孕婦依體質評估；請保存於25℃以下乾燥環境，置於兒童無法拿到處",
-    storage: "25℃以下乾燥環境，避免陽光直射",
-    serving: "日劑、夜劑每日各1粒，餐後搭配開水食用",
-    prohibited: "花生過敏者、12歲以下兒童"
-  },
-  {
-    brand: "Diu+", name: "大餐防守對策",
-    barcode: "4719881102753",
-    type: "food", category: "保健食品", form: "膠囊",
-    spec: "4粒/包（金色2粒＋紅色2粒）", shelf_life: "2年", origin: "台灣",
-    net_weight: "4粒/包",
-    ingredients: "【金色膠囊】洋菇萃取物、山茶花萃取粉、秋葵萃取粉、馬鈴薯澱粉、硬脂酸鎂、玫瑰果萃取粉、熟成苦瓜粉、藤黃果抽出物；【紅色膠囊】微結晶α-纖維素、玉米鬚萃取粉、靈芝菌絲體粉、馬鈴薯澱粉、甘胺酸鋅、白腎豆萃取粉、島胡椒萃取粉、栗子皮萃取物、菸鹼酸鉻複合物",
-    allergens: "無常見過敏原（純植物萃取）",
-    warnings: "建議滿6歲以上使用；孕婦建議諮詢醫師；全素可食",
-    storage: "陰涼乾燥處，避免高溫及陽光照射",
-    serving: "每日1次，每次1包（金色2粒＋紅色2粒），大餐前服用",
-    prohibited: "孕婦需諮詢"
-  },
-  {
-    brand: "Diu+", name: "孅孅凍",
-    barcode: "4719881102760",
-    type: "food", category: "保健食品", form: "果凍",
-    spec: "20g/包", shelf_life: "18個月", origin: "台灣",
-    net_weight: "20g",
-    ingredients: "水、D-山梨醇液（甜味劑）、蘋果濃縮汁、專利難消化性麥芽糊精、決明子萃取物、藤黃果萃取物、檸檬酸、蒟蒻粉、鹿角菜膠、羊角豆萃取物、檸檬濃縮汁、香料、專利二胜肽魚膠原蛋白粉、果寡糖粉、蘆薈萃取物、玉米鬚萃取物、專利山茶花萃取物、檸檬酸鈉、綜合消化酵素、綜合蔬果發酵粉、蔗糖素、黃香草木樨萃取物、綜合蔬果萃取物",
-    allergens: "魚類、芝麻、堅果、大豆、麩質、奇異果",
-    warnings: "含蘆薈萃取物，孕婦禁食；含魚類及其製品；含芝麻、堅果、大豆、麩質、奇異果及其製品；疾病、腎功能不全或過敏體質者請先諮詢醫藥專業人士",
-    storage: "陰涼乾燥處，避免陽光直射",
-    serving: "每日1次，每次1包，餐後食用",
-    prohibited: "孕婦禁用、幼兒、魚類/芝麻/堅果/大豆/麩質/奇異果過敏者"
-  },
-  {
-    brand: "Diu+", name: "雙艙仙女飲",
-    barcode: "4719881102777",
-    type: "food", category: "保健食品", form: "雙艙",
-    spec: "上艙2顆膠囊＋下艙30ml飲品", shelf_life: "2年", origin: "台灣",
-    net_weight: "上艙膠囊2顆＋下艙30ml",
-    ingredients: "【下艙】水、魚膠原蛋白、綜合莓濃縮汁、澄清水蜜桃濃縮汁、檸檬酸、維生素C、香料、甜菊醣苷、越桔萃取物、流行鏈球菌發酵物、專利玄米萃取物；【上艙穀胱甘肽膠囊】麥芽糊精、穀胱甘肽、二氧化矽；【上艙Vit C膠囊】麥芽糊精、穀微素、維生素C、二氧化矽",
-    allergens: "魚類及其製品",
-    warnings: "含魚類及其製品，魚類過敏者請避免；孕婦、哺乳婦女建議諮詢醫師",
-    storage: "陰涼乾燥處，避免陽光直射",
-    serving: "每日1次，每次上艙2顆＋下艙1瓶",
-    prohibited: "魚類過敏者、孕婦需評估"
-  },
-  {
-    brand: "Diu+", name: "雙艙守宮飲",
-    barcode: "4719881102784",
-    type: "food", category: "保健食品", form: "雙艙",
-    spec: "上艙1顆暖宮膠囊＋下艙守宮飲", shelf_life: "18個月", origin: "台灣",
-    net_weight: "上艙1顆＋下艙1瓶",
-    ingredients: "【上艙暖宮膠囊】漢方萃取物（丹參、益母草、山楂、當歸、川芎、熟地黃、甘草、白芍）、紅棗萃取物；【下艙守宮飲】水、異麥芽寡糖漿、砂糖、蔓越莓濃縮汁、葡萄濃縮汁、D-甘露糖、香料、專利蔓越莓抽出物、9種乳酸菌發酵物（加氏乳桿菌、保加利亞乳桿菌、瑞士乳酸菌等）",
-    allergens: "無常見過敏原，含乳酸菌",
-    warnings: "孕婦、哺乳婦女不宜；含漢方活血成分（丹參、益母草、當歸等），經期中及凝血功能異常者請先諮詢醫師；服用抗凝血藥物者需特別注意；請與其他藥物間隔2小時服用",
-    storage: "陰涼乾燥處，避免高溫及陽光照射，拆封後盡速食用",
-    serving: "每日1次，上艙1顆＋下艙1瓶",
-    prohibited: "孕婦禁用、哺乳婦女、凝血功能異常者"
-  },
-  {
-    brand: "Diu+", name: "膠妍粉",
-    barcode: "4719881102791",
-    type: "food", category: "保健食品", form: "粉末",
-    spec: "30g/包", shelf_life: "2年", origin: "台灣",
-    net_weight: "30g",
-    ingredients: "麥芽糊精、專利魚膠原蛋白、片劑澱粉、水蜜桃果汁粉（水蜜桃果汁、麥芽糊精、檸檬酸、香料、β-胡蘿蔔素）、二氧化矽、綜合莓類調味果汁粉、香料、蘋果酸、L-抗壞血酸（維生素C）、蔗糖素（甜味劑）、專利綜合莓果萃取物、專利石榴抽出物、專利山茶花萃取物",
-    allergens: "魚類及其製品",
-    warnings: "含魚類及其製品，不適合過敏體質者食用；孕婦、疾病或腎功能不全者建議先諮詢專業人士；產品顏色類似乳白色可爾必思，有水蜜桃莓果風味，非無色無味",
-    storage: "陰涼乾燥處，避免陽光直射",
-    serving: "每日1次，每次1包",
-    prohibited: "魚類過敏者、孕婦需評估"
-  },
-  {
-    brand: "Diu+", name: "康普茶升級版（熱帶水果）",
-    barcode: "4719881102814",
-    type: "food", category: "茶飲", form: "粉末沖泡",
-    spec: "5g/包", shelf_life: "24個月", origin: "台灣",
-    net_weight: "5g",
-    ingredients: "檸檬酸、碳酸氫鈉、康普茶粉（麥芽糊精、康普茶發酵液）、麥芽糊精、綜合果汁粉、菊苣纖維、果寡糖、難消化性麥芽糊精、二氧化矽、蔗糖素、香料、專利山苦瓜萃取物、專利毛喉鞘蕊花萃取粉、專利芙瑪金萃、專利香檬精粹粉",
-    allergens: "無常見過敏原",
-    warnings: "無咖啡因；腸胃極度敏感者注意；孕婦、哺乳中建議先諮詢專業人士；沖泡勿超過50℃，冰水沖泡建議多攪拌",
-    storage: "陰涼乾燥處，避免陽光直曬",
-    serving: "每日1次，每次1包，加入200ml水",
-    prohibited: "腸胃極敏感者、孕婦需評估"
-  },
-  {
-    brand: "Diu+", name: "康普茶升級版（麝香葡萄）",
-    barcode: "4719881102821",
-    type: "food", category: "茶飲", form: "粉末沖泡",
-    spec: "5g/包", shelf_life: "24個月", origin: "台灣",
-    net_weight: "5g",
-    ingredients: "檸檬酸、碳酸氫鈉、康普茶粉（麥芽糊精、康普茶發酵液）、麥芽糊精、葡萄果汁粉、難消化性麥芽糊精、二氧化矽、蔗糖素、香料、專利山苦瓜萃取物、專利毛喉鞘蕊花萃取粉、專利芙瑪金萃、專利香檬精粹粉",
-    allergens: "無常見過敏原",
-    warnings: "無咖啡因；腸胃極度敏感者注意；孕婦、哺乳中建議先諮詢專業人士；沖泡勿超過50℃",
-    storage: "陰涼乾燥處，避免陽光直曬",
-    serving: "每日1次，每次1包，加入200ml水",
-    prohibited: "腸胃極敏感者、孕婦需評估"
-  },
-  {
-    brand: "Diu+", name: "康普茶升級版（鳳梨蘋果）",
-    barcode: "4719881102838",
-    type: "food", category: "茶飲", form: "粉末沖泡",
-    spec: "5g/包", shelf_life: "24個月", origin: "台灣",
-    net_weight: "5g",
-    ingredients: "檸檬酸、碳酸氫鈉、康普茶粉（麥芽糊精、康普茶發酵液）、麥芽糊精、蘋果果汁粉、鳳梨果汁粉、難消化性麥芽糊精、二氧化矽、蔗糖素、香料、專利山苦瓜萃取物、專利毛喉鞘蕊花萃取粉、專利芙瑪金萃、專利香檬精粹粉",
-    allergens: "無常見過敏原",
-    warnings: "無咖啡因；腸胃極度敏感者注意；孕婦、哺乳中建議先諮詢專業人士；沖泡勿超過50℃",
-    storage: "陰涼乾燥處，避免陽光直曬",
-    serving: "每日1次，每次1包，加入200ml水",
-    prohibited: "腸胃極敏感者、孕婦需評估"
-  },
-  {
-    brand: "Diu+", name: "藤黃果洛神茶（升級版）",
-    barcode: "4719881102876",
-    type: "food", category: "茶飲", form: "茶包",
-    spec: "3.5g/包", shelf_life: "2年", origin: "台灣",
-    net_weight: "3.5g",
-    ingredients: "紅酒粕花草複合茶（紅茶、香料、仙楂、洛神、酒石酸、天然葡萄皮色素、甜菊醣苷、紅甜菜、專利藤黃果萃取物、葡萄酒粕萃取物（含白藜蘆醇）、大吟釀酒粕）、專利毛喉鞘蕊花萃取物、四棱白粉藤萃取物、柑橘萃取物（含HPMF™）、仙人掌萃取物、玉米鬚萃取物",
-    allergens: "含麩質穀物及其製品",
-    warnings: "含麩質穀物及其製品，不適合過敏體質者食用；孕婦、幼兒與生長發育期之青少年不宜使用；若有疾病、腎功能不全者請先諮詢醫藥專業人士；請與其他藥物間隔2小時",
-    storage: "陰涼乾燥處",
-    serving: "每日1次，每次1包，熱水沖泡約200cc",
-    prohibited: "麩質過敏者、孕婦、幼兒、生長發育期青少年"
-  },
-  {
-    brand: "Diu+", name: "藤黃果金麥茶（升級版）",
-    barcode: "4719881102883",
-    type: "food", category: "茶飲", form: "茶包",
-    spec: "3.5g/包", shelf_life: "2年", origin: "台灣",
-    net_weight: "3.5g",
-    ingredients: "蕎麥、南非國寶綠茶、檸檬酸、大麥、蘋果酸、香料、蔗糖素（甜味劑）、藤黃果萃取物、鳳梨酵素、四棱白粉藤萃取物、專利毛喉鞘蕊花萃取物、柑橘萃取物（含HPMF™）、仙人掌萃取物、玉米鬚萃取物",
-    allergens: "含麩質穀物及其製品",
-    warnings: "含麩質穀物及其製品，不適合過敏體質者食用；孕婦、幼兒與生長發育期之青少年不宜使用；若有疾病、腎功能不全者請先諮詢；請與其他藥物間隔2小時",
-    storage: "陰涼乾燥處",
-    serving: "每日1次，每次1包，熱水沖泡約200cc",
-    prohibited: "麩質過敏者、孕婦、幼兒、生長發育期青少年"
-  },
-  {
-    brand: "Diu+", name: "藤黃果水蜜桃茶（升級版）",
-    barcode: "4719881102890",
-    type: "food", category: "茶飲", form: "茶包",
-    spec: "3.5g/包", shelf_life: "2年", origin: "台灣",
-    net_weight: "3.5g",
-    ingredients: "南非國寶紅茶、水蜜桃果乾（水蜜桃、米粉）、蕎麥、香料、蘋果酸、檸檬酸、大麥、蔗糖素（甜味劑）、藤黃果萃取物、康普茶粉、專利毛喉鞘蕊花萃取物、四棱白粉藤萃取物、柑橘萃取物（含HPMF™）、仙人掌萃取物、玉米鬚萃取物",
-    allergens: "含麩質穀物及其製品",
-    warnings: "含麩質穀物及其製品，不適合過敏體質者食用；孕婦、幼兒與生長發育期之青少年不宜使用；若有疾病、腎功能不全者請先諮詢；請與其他藥物間隔2小時",
-    storage: "陰涼乾燥處",
-    serving: "每日1次，每次1包，熱水沖泡約200cc",
-    prohibited: "麩質過敏者、孕婦、幼兒、生長發育期青少年"
-  },
-  // ── 大激賞 ──────────────────────────────────────────
-  {
-    brand: "大激賞", name: "大餐防守對策",
-    barcode: "4719881102753",
-    type: "food", category: "保健食品", form: "膠囊",
-    spec: "4粒/包（金色2粒＋紅色2粒）", shelf_life: "2年", origin: "台灣",
-    net_weight: "4粒/包",
-    ingredients: "【金色膠囊】洋菇萃取物、山茶花萃取粉、秋葵萃取粉、玫瑰果萃取粉、熟成苦瓜粉、藤黃果抽出物；【紅色膠囊】玉米鬚萃取粉、靈芝菌絲體粉、白腎豆萃取粉、島胡椒萃取粉、栗子皮萃取物、菸鹼酸鉻",
-    allergens: "無常見過敏原（純植物萃取），全素可食",
-    warnings: "建議滿6歲以上使用；孕婦建議先諮詢醫師；全素可食",
-    storage: "陰涼乾燥處，避免高溫及陽光照射",
-    serving: "每日1次，每次1包（金色2粒＋紅色2粒），大餐前服用",
-    prohibited: "孕婦需諮詢、6歲以下不建議"
-  },
-  {
-    brand: "大激賞", name: "閃閃金膠囊",
-    type: "food", category: "保健食品", form: "膠囊",
-    spec: "0.5g/粒；20粒/袋；3袋/盒", shelf_life: "2年", origin: "台灣",
-    net_weight: "0.5g/粒",
-    ingredients: "靈芝菌絲體發酵酵粉、雲芝菌絲體發酵酵粉、鮮果萃取物、黑苦瓜萃取粉、洋蔥萃取物（含L-精胺酸）、橄欖粉、山葵葉萃取物、洋菇萃取粉",
-    allergens: "無特別標示",
-    warnings: "建議滿6歲以上使用；陰涼處保存，拆封後盡快食用完畢",
-    storage: "陰涼處保存，拆封後盡快食用",
-    serving: "每日2次，每次1～2粒，餐前食用",
-    prohibited: "6歲以下不建議"
-  },
-  {
-    brand: "大激賞", name: "閃閃銀膠囊",
-    type: "food", category: "保健食品", form: "膠囊",
-    spec: "0.5g/粒；20粒/袋；3袋/盒", shelf_life: "2年", origin: "台灣",
-    net_weight: "0.5g/粒",
-    ingredients: "靈芝菌絲體發酵酵粉、玉米鬚萃取物、白腰豆萃取物、啤酒酵母胜肽、可可粉、天然香草香料、薑、多香果、肉桂、栗子種皮萃取物、山苦瓜萃取物、菸鹼酸鉻",
-    allergens: "無特別標示",
-    warnings: "建議滿6歲以上使用；陰涼處保存，拆封後盡快食用完畢",
-    storage: "陰涼處保存，拆封後盡快食用",
-    serving: "每日2次，每次1～2粒，餐前食用",
-    prohibited: "6歲以下不建議"
-  },
-  {
-    brand: "大激賞", name: "元氣紅潤膠囊",
-    type: "food", category: "保健食品", form: "膠囊",
-    spec: "0.5g/顆×30顆", shelf_life: "3年", origin: "台灣",
-    net_weight: "0.5g/顆",
-    ingredients: "磷酸氫鈣、微結晶纖維素、啤酒酵母B群、硒酵母、複方維生素C（抗壞血酸、柑橘萃取物、米糠粉）、甘胺酸亞鐵（含檸檬酸、麥芽糊精）、鋅酵母（非活性酵母、硫酸鋅）、重酒石酸膽鹼；膠囊：明膠、二氧化鈦、甘油、硫酸月桂酯鈉、純水",
-    allergens: "膠囊含明膠（非全素）",
-    warnings: "孕婦建議先諮詢醫師；鐵劑敏感者建議餐後服用；非全素（膠囊含明膠）",
-    storage: "陰涼乾燥處，避免高溫及陽光直射",
-    serving: "每天一次，每次一顆，餐後食用",
-    prohibited: "孕婦需諮詢"
-  },
-  {
-    brand: "大激賞", name: "納豆Q10膠囊",
-    type: "food", category: "保健食品", form: "膠囊",
-    spec: "550mg/粒×90粒/盒", shelf_life: "2年", origin: "台灣",
-    net_weight: "550mg/粒",
-    ingredients: "專利番紅花萃取物（1mg/粒）、紅麴萃取粉（1.5mg/粒）、納豆發酵物（納豆激酶活性20000FU/g，15mg/粒）、輔酵素Q10（5mg/粒）、硬脂酸鎂、二氧化矽；膠囊：明膠、硫酸月桂酯鈉、純水、二氧化鈦、甘油、食用色素",
-    allergens: "無特別標示",
-    warnings: "⚠️ 15歲以下小孩、孕婦、哺乳期婦女及服用抗凝血藥品（warfarin）之病患不宜食用；重大疾病及體質過敏者應先請教醫藥專業人員；本產品非藥品",
-    storage: "陰涼乾燥處，避免高溫及陽光照射，拆封後儘速食用",
-    serving: "每日2粒，搭配溫開水，餐後食用",
-    prohibited: "15歲以下禁用、孕婦禁用、哺乳婦女禁用、服用抗凝血藥（warfarin）者禁用"
-  },
-  // ── 樹飛雪 SnowYOU 保健食品 ──────────────────────────────────────
-  {
-    brand: "SnowYOU 樹飛雪", name: "橙長鈣",
-    type: "food", category: "保健食品", form: "粉末",
-    spec: "2g/包×30包/盒", shelf_life: "3年", origin: "台灣",
-    net_weight: "2g/包",
-    ingredients: "柳橙果汁粉（砂糖、柳橙濃縮果汁、麥芽糊精、辛烯基丁二酸鈉澱粉、檸檬酸、檸檬酸鈉、玉米澱粉、蘋果酸、橘子油、β-胡蘿蔔素、阿拉伯膠、中鏈三酸甘油酯、維生素C（抗氧化劑）、二氧化矽、維生素E（抗氧化劑））、海藻鈣、海洋深層水濃縮物、菊苣纖維、維生素D3、酪蛋白磷酸肽",
-    allergens: "含牛乳及其製品（酪蛋白磷酸肽）",
-    warnings: "含牛乳及其製品，對牛乳過敏者請避免食用；請放置陰涼乾燥處，並避免高溫及陽光直射",
-    storage: "陰涼乾燥處，避免高溫及陽光直射",
-    serving: "早餐飯後一次，每次一包",
-    prohibited: "牛乳過敏者"
-  },
-  // ── Diu+ 保養品 ──────────────────────────────────────────
-  {
-    brand: "Diu+", name: "蜂王乳全能卸妝淨顏霜",
-    type: "cosmetic", category: "保養品", form: "乳霜",
-    spec: "100ml", shelf_life: "3年", origin: "台灣",
-    net_weight: "100ml",
-    ingredients: "水、礦物油、甘油、蜂蠟、蜂蜜萃取、赤芝萃取、玻尿酸、生育酚（維生素E）",
-    allergens: "蜂產品",
-    warnings: "出現異常反應請停止使用；多功能用法：卸妝、洗臉、去角質、按摩、厚敷面膜",
-    storage: "陰涼乾燥處",
-    serving: "乾臉取適量，均勻塗抹全臉，畫圈按摩至乳化後，以清水洗淨",
-    prohibited: "蜂產品過敏者"
-  },
-  {
-    brand: "Diu+", name: "皇家胺基酸保濕洗顏蜜",
-    type: "cosmetic", category: "保養品", form: "洗顏",
-    spec: "100ml", shelf_life: "3年", origin: "台灣",
-    net_weight: "100ml",
-    ingredients: "水、椰油醯谷氨酸二鈉（胺基酸）、玻尿酸鈉、甘油、赤芝萃取",
-    allergens: "無特別標示",
-    warnings: "皮膚有傷口或濕疹請停止使用；出現發紅或過敏請停止使用並就醫；勿存放高溫潮濕處，開封後盡早使用完畢；pH5.5溫和配方",
-    storage: "避免高溫潮濕及陽光直射",
-    serving: "早晚使用，取適量於手掌加少量水，按摩方式洗臉後以清水洗淨",
-    prohibited: "肌膚過敏者注意"
-  },
-  {
-    brand: "Diu+", name: "藍銅保濕養膚水",
-    type: "cosmetic", category: "保養品", form: "化妝水",
-    spec: "100ml", shelf_life: "3年", origin: "台灣",
-    net_weight: "100ml",
-    ingredients: "水、蘆薈葉萃取、銅胜肽（GHK-Cu）、玻尿酸鈉、甘油、赤芝萃取",
-    allergens: "無特別標示",
-    warnings: "長時間靜置或溫度變化可能出現些微分層或成分聚集，使用前輕輕搖晃均勻即可，無異味或明顯變色則正常可使用",
-    storage: "陰涼乾燥處，避免陽光直射",
-    serving: "清潔後取適量輕拍臉部至吸收",
-    prohibited: "無特別禁忌"
-  },
-  {
-    brand: "Diu+", name: "璀璨藍銅彈潤精華液",
-    type: "cosmetic", category: "保養品", form: "精華液",
-    spec: "30ml", shelf_life: "3年", origin: "台灣",
-    net_weight: "30ml",
-    ingredients: "水、銅胜肽（GHK-Cu）、玻尿酸鈉、神經醯胺、赤芝萃取",
-    allergens: "無特別標示",
-    warnings: "化妝水後使用，使用前搖晃均勻，取適量輕柔按壓於全臉",
-    storage: "陰涼乾燥處，避免陽光直射",
-    serving: "化妝水後，使用前搖晃均勻，取適量輕柔按壓於全臉，待吸收後進行後續保養",
-    prohibited: "無特別禁忌"
-  },
-  {
-    brand: "Diu+", name: "藍銅彈力緊緻水凝霜",
-    type: "cosmetic", category: "保養品", form: "乳霜",
-    spec: "50ml", shelf_life: "3年", origin: "台灣",
-    net_weight: "50ml",
-    ingredients: "水、銅胜肽（GHK-Cu）、玻尿酸鈉、甘油、赤芝萃取",
-    allergens: "無特別標示",
-    warnings: "化妝水後使用，取適量輕點於臉部，以指腹均勻按摩至完全吸收",
-    storage: "陰涼乾燥處，避免陽光直射",
-    serving: "化妝水後，取適量輕點於臉部，以指腹均勻按摩至完全吸收",
-    prohibited: "無特別禁忌"
-  },
-  {
-    brand: "Diu+", name: "智慧型閃耀養膚粉底",
-    type: "cosmetic", category: "保養品", form: "粉底液",
-    spec: "40ml", shelf_life: "3年", origin: "台灣",
-    net_weight: "40ml",
-    ingredients: "SPF35防曬，輕薄遮瑕自然妝感，養膚配方",
-    allergens: "無特別標示",
-    warnings: "防曬力SPF35；注意均勻推展",
-    storage: "陰涼乾燥處",
-    serving: "保養後取適量塗抹全臉，由內到外由下到上輕輕提拉",
-    prohibited: "無特別禁忌"
-  },
-  {
-    brand: "Diu+", name: "維他命C美白奈米粉",
-    type: "cosmetic", category: "保養品", form: "粉末",
-    spec: "15g", shelf_life: "3年", origin: "台灣",
-    net_weight: "15g",
-    ingredients: "維生素C（L-抗壞血酸）、奈米微粒化配方",
-    allergens: "無特別標示",
-    warnings: "建議晚上使用為主，白天使用需做好防曬；可加入化妝水、精華液或乳霜中混合使用；若有發紅或過敏反應，請停止使用",
-    storage: "陰涼乾燥處，避免陽光直射",
-    serving: "可加入化妝水、精華液或乳霜中混合使用，均勻塗抹全臉",
-    prohibited: "肌膚過敏者注意"
-  }
+  { brand:"Diu+", name:"Clean Coffee", barcode:"4719881102708", type:"food",
+    spec:"15ml/包", shelf_life:"2年", origin:"台灣", form:"液態飲",
+    serving:"每日1次，每次1包，白天或餐後",
+    storage:"陰涼乾燥處",
+    allergens:"無常見過敏原",
+    warnings:"含咖啡因，咖啡因敏感者、心悸或失眠體質需注意；孕婦與哺乳中建議先諮詢醫師；兒童不建議",
+    prohibited:"咖啡因敏感者、孕婦需評估、兒童不建議",
+    ingredients:"水、咖啡萃取液（水、研磨咖啡粉）、專利難消化性麥芽糊精、咖啡粉、藤黃果萃取物、關華豆膠、白腎豆萃取物、專利毛喉鞘蕊花萃取物（毛喉鞘蕊花萃取物、麥芽糊精）" },
+
+  { brand:"Diu+", name:"飽包（可可）", barcode:"4719881102715", type:"food",
+    spec:"40g/包", shelf_life:"18個月", origin:"台灣", form:"粉末",
+    serving:"每日1包，沖泡180ml水",
+    storage:"陰涼乾燥處，開封後盡速食用",
+    allergens:"⚠️ 大豆、牛奶、堅果、含麩質穀物及其製品",
+    warnings:"含大豆、牛奶、堅果、含麩質穀物及其製品，不適合過敏體質者食用",
+    prohibited:"大豆/牛奶/麩質/堅果過敏者",
+    ingredients:"豌豆蛋白、大豆蛋白、植物油粉、異麥芽寡糖、砂糖、可可粉、綜合穀物可可球、麥芽糊精、香料、二氧化矽、綜合維生素、綜合礦物質、食鹽、蔗糖素（甜味劑）" },
+
+  { brand:"Diu+", name:"飽包（香蕉）", barcode:"4719881102722", type:"food",
+    spec:"40g/包", shelf_life:"18個月", origin:"台灣", form:"粉末",
+    serving:"每日1包，沖泡180ml水",
+    storage:"陰涼乾燥處，開封後盡速食用",
+    allergens:"⚠️ 大豆、牛奶、堅果、含麩質穀物及其製品",
+    warnings:"含大豆、牛奶、堅果、含麩質穀物及其製品，不適合過敏體質者食用",
+    prohibited:"大豆/牛奶/麩質/堅果過敏者",
+    ingredients:"豌豆蛋白、大豆蛋白、植物油粉、異麥芽寡糖、砂糖、香蕉果汁粉、麥芽糊精、綜合穀物可可球、香料、二氧化矽、綜合維生素、綜合礦物質、蔗糖素（甜味劑）" },
+
+  { brand:"Diu+", name:"飽包（奶茶）", barcode:"4719881102739", type:"food",
+    spec:"40g/包", shelf_life:"18個月", origin:"台灣", form:"粉末",
+    serving:"每日1包，沖泡180ml水",
+    storage:"陰涼乾燥處，開封後盡速食用",
+    allergens:"⚠️ 大豆、牛奶、堅果、含麩質穀物及其製品",
+    warnings:"含大豆、牛奶、堅果、含麩質穀物及其製品，不適合過敏體質者食用",
+    prohibited:"大豆/牛奶/麩質/堅果過敏者",
+    ingredients:"植物蛋白（豌豆蛋白、大豆蛋白）、植物油粉、砂糖、異麥芽寡糖、烏龍茶粉、香料、可可球、麥芽糊精、綜合維生素、綜合礦物質、食鹽、蔗糖素（甜味劑）" },
+
+  { brand:"Diu+", name:"明守對策", barcode:"4719881102746", type:"food",
+    spec:"日劑0.8g×20粒＋夜劑0.6g×20粒，共40入/盒", shelf_life:"2年", origin:"台灣", form:"膠囊",
+    serving:"日劑、夜劑每日各1粒，餐後搭配開水食用",
+    storage:"25℃以下乾燥環境，避免陽光直射",
+    allergens:"⚠️ 含花生製品（日劑含花生油）",
+    warnings:"含花生製品，花生過敏者禁用；12歲以下不建議；孕婦依體質評估",
+    prohibited:"花生過敏者禁用、12歲以下不建議",
+    ingredients:"【日劑】亞麻仁油、金盞花萃取物、DHA藻油、葡萄糖酸鋅、α醣化橙皮苷、酵母硒、維生素E、南薑萃取物、維生素B群、維生素A（含花生油）、葉酸、維生素B12；【夜劑】麥芽糊精、山桑子萃取物、金盞花萃取物、α醣化橙皮苷、流行鏈球菌發酵物（含透明質酸鈉）、二氧化矽、維生素E、葉酸、維生素A" },
+
+  { brand:"Diu+", name:"大餐防守對策", barcode:"4719881102753", type:"food",
+    spec:"4粒/包（金色2粒＋紅色2粒）", shelf_life:"2年", origin:"台灣", form:"膠囊",
+    serving:"每日1次，每次1包（金色2粒＋紅色2粒），大餐前服用",
+    storage:"陰涼乾燥處，避免高溫及陽光照射",
+    allergens:"無常見過敏原（全素可食）",
+    warnings:"建議滿6歲以上使用；孕婦建議諮詢醫師",
+    prohibited:"6歲以下不建議、孕婦需諮詢",
+    ingredients:"【金色】洋菇萃取物、山茶花萃取粉、秋葵萃取粉、玫瑰果萃取粉、熟成苦瓜粉、藤黃果抽出物；【紅色】微結晶α-纖維素、玉米鬚萃取粉、靈芝菌絲體粉、甘胺酸鋅、白腎豆萃取粉、島胡椒萃取粉、栗子皮萃取物、菸鹼酸鉻複合物" },
+
+  { brand:"Diu+", name:"孅孅凍", barcode:"4719881102760", type:"food",
+    spec:"20g/包", shelf_life:"18個月", origin:"台灣", form:"果凍",
+    serving:"每日1次，每次1包，餐後食用",
+    storage:"陰涼乾燥處，避免陽光直射",
+    allergens:"⚠️ 魚類、芝麻、堅果、大豆、麩質、奇異果",
+    warnings:"含蘆薈萃取物，孕婦禁食；含魚類及多種過敏原；疾病、腎功能不全或過敏體質者請先諮詢醫藥專業人士",
+    prohibited:"孕婦禁用、幼兒、多種過敏原過敏者",
+    ingredients:"水、D-山梨醇液（甜味劑）、蘋果濃縮汁、專利難消化性麥芽糊精、決明子萃取物、藤黃果萃取物、檸檬酸、蒟蒻粉、鹿角菜膠、羊角豆萃取物、檸檬濃縮汁、香料、專利二胜肽魚膠原蛋白粉、果寡糖粉、蘆薈萃取物、玉米鬚萃取物、專利山茶花萃取物、檸檬酸鈉、綜合消化酵素、綜合蔬果發酵粉、蔗糖素、黃香草木樨萃取物、綜合蔬果萃取物" },
+
+  { brand:"Diu+", name:"雙艙仙女飲", barcode:"4719881102777", type:"food",
+    spec:"上艙2顆膠囊＋下艙30ml飲品", shelf_life:"18個月", origin:"台灣", form:"雙艙",
+    serving:"每日1次，上艙各1顆（白色+粉色），下艙1瓶",
+    storage:"陰涼乾燥處，避免高溫及陽光照射，拆封後儘速食用",
+    allergens:"⚠️ 魚類及其製品、穀胱甘肽",
+    warnings:"含魚類及其製品；孕婦、哺乳婦女、嬰幼兒不宜食用；請與藥物間隔2小時",
+    prohibited:"孕婦禁用、哺乳婦女、嬰幼兒、魚類過敏者",
+    ingredients:"【下艙】水、魚膠原蛋白、綜合莓濃縮汁、水蜜桃濃縮汁、檸檬酸、維生素C、香料、甜菊醣苷、越桔萃取物、流行鏈球菌發酵物（含透明質酸鈉）、專利米萃取物；【上艙穀胱甘肽膠囊】麥芽糊精、穀胱甘肽、二氧化矽；【上艙Vit C膠囊】麥芽糊精、維生素C、二氧化矽" },
+
+  { brand:"Diu+", name:"雙艙守宮飲", barcode:"4719881102784", type:"food",
+    spec:"上艙1顆暖宮膠囊＋下艙守宮飲", shelf_life:"18個月", origin:"台灣", form:"雙艙",
+    serving:"每日1次，上艙1顆，下艙1瓶",
+    storage:"陰涼乾燥處，拆封後儘速食用",
+    allergens:"無常見過敏原，含乳酸菌",
+    warnings:"孕婦、哺乳婦女禁用；含漢方活血成分，經期中及凝血功能異常者請先諮詢醫師；請與藥物間隔2小時",
+    prohibited:"孕婦禁用、哺乳婦女、凝血功能異常者",
+    ingredients:"【上艙暖宮膠囊】漢方萃取物（丹參、益母草、山楂、當歸、川芎、熟地黃、甘草、白芍）、紅棗萃取物；【下艙守宮飲】水、異麥芽寡糖漿、砂糖、蔓越莓濃縮汁、葡萄濃縮汁、D-甘露糖、香料、專利蔓越莓抽出物、9種乳酸菌發酵物" },
+
+  { brand:"Diu+", name:"膠妍粉", barcode:"4719881102791", type:"food",
+    spec:"30g/包", shelf_life:"2年", origin:"台灣", form:"粉末",
+    serving:"每日1次，每次1包",
+    storage:"陰涼乾燥處，避免陽光直射",
+    allergens:"⚠️ 魚類及其製品",
+    warnings:"含魚類及其製品，不適合過敏體質者食用；孕婦、疾病或腎功能不全者建議先諮詢專業人士",
+    prohibited:"魚類過敏者、孕婦需評估",
+    ingredients:"麥芽糊精、專利魚膠原蛋白、片劑澱粉、水蜜桃果汁粉、二氧化矽、綜合莓類調味果汁粉、香料、蘋果酸、L-抗壞血酸（維生素C）、蔗糖素（甜味劑）、專利綜合莓果萃取物、專利石榴抽出物、專利山茶花萃取物" },
+
+  { brand:"Diu+", name:"康普茶（熱帶水果）", barcode:"4719881102814", type:"food",
+    spec:"5g/包", shelf_life:"24個月", origin:"台灣", form:"粉末沖泡",
+    serving:"每日1次，每次1包，加入200ml水，沖泡勿超過50℃",
+    storage:"陰涼乾燥處，避免陽光直曬",
+    allergens:"無常見過敏原",
+    warnings:"無咖啡因；腸胃極度敏感者注意；孕婦、哺乳中建議先諮詢專業人士",
+    prohibited:"腸胃極敏感者、孕婦需評估",
+    ingredients:"檸檬酸、碳酸氫鈉、康普茶粉（麥芽糊精、康普茶發酵液）、麥芽糊精、綜合果汁粉、菊苣纖維、果寡糖、難消化性麥芽糊精、二氧化矽、蔗糖素、香料、專利山苦瓜萃取物、專利毛喉鞘蕊花萃取粉、專利芙瑪金萃、專利香檬精粹粉" },
+
+  { brand:"Diu+", name:"康普茶（麝香葡萄）", barcode:"4719881102821", type:"food",
+    spec:"5g/包", shelf_life:"24個月", origin:"台灣", form:"粉末沖泡",
+    serving:"每日1次，每次1包，加入200ml水",
+    storage:"陰涼乾燥處，避免陽光直曬",
+    allergens:"無常見過敏原",
+    warnings:"無咖啡因；腸胃極度敏感者注意；孕婦需評估",
+    prohibited:"腸胃極敏感者、孕婦需評估",
+    ingredients:"檸檬酸、碳酸氫鈉、康普茶粉（麥芽糊精、康普茶發酵液）、麥芽糊精、葡萄果汁粉、難消化性麥芽糊精、二氧化矽、蔗糖素、香料、專利山苦瓜萃取物、專利毛喉鞘蕊花萃取粉、專利芙瑪金萃、專利香檬精粹粉" },
+
+  { brand:"Diu+", name:"康普茶（蘋果鳳梨）", barcode:"4719881102838", type:"food",
+    spec:"5g/包", shelf_life:"24個月", origin:"台灣", form:"粉末沖泡",
+    serving:"每日1次，每次1包，加入200ml水",
+    storage:"陰涼乾燥處，避免陽光直曬",
+    allergens:"無常見過敏原",
+    warnings:"無咖啡因；腸胃極度敏感者注意；孕婦需評估",
+    prohibited:"腸胃極敏感者、孕婦需評估",
+    ingredients:"檸檬酸、碳酸氫鈉、康普茶粉（麥芽糊精、康普茶發酵液）、麥芽糊精、蘋果果汁粉、鳳梨果汁粉、難消化性麥芽糊精、二氧化矽、蔗糖素、香料、專利山苦瓜萃取物、專利毛喉鞘蕊花萃取粉、專利芙瑪金萃、專利香檬精粹粉" },
+
+  { brand:"Diu+", name:"玫瑰孅孅飲", barcode:"4719881102906", type:"food",
+    spec:"7g/包", shelf_life:"2年", origin:"台灣", form:"粉末沖泡",
+    serving:"每日1-2包，搭配足量水食用",
+    storage:"陰涼處，拆封後盡快食用",
+    allergens:"含洋車前子、穀胱甘肽",
+    warnings:"含洋車前子需搭配足量水；孕婦、哺乳婦女、嬰幼兒應避免；含桑黃菌絲體，真菌過敏者注意",
+    prohibited:"孕婦、哺乳婦女、嬰幼兒、真菌過敏者",
+    ingredients:"洋車前子殼粉、蔓越莓調味果汁粉、豌豆纖維、IMMIO®MSD多醣體複合萃取物、蘋果酸、藤黃果萃取物、白腎豆萃取物、玫瑰花香料粉、綜合酵素、蘋果纖維、綜合莓果香料粉、蔗糖素、苦瓜萃取粉、穀胱甘肽、玫瑰花瓣萃取物" },
+
+  { brand:"Diu+", name:"藤黃果洛神茶", barcode:"4719881102876", type:"food",
+    spec:"3.5g/包", shelf_life:"2年", origin:"台灣", form:"茶包",
+    serving:"每日1次，每次1包，熱水沖泡約200cc",
+    storage:"陰涼乾燥處",
+    allergens:"⚠️ 含麩質穀物及其製品",
+    warnings:"孕婦、幼兒與生長發育期青少年不宜；腎功能不全者請先諮詢；請與藥物間隔2小時",
+    prohibited:"麩質過敏者、孕婦禁用、幼兒、生長發育期青少年",
+    ingredients:"紅酒粕花草複合茶（紅茶、香料、仙楂、洛神、酒石酸、天然葡萄皮色素、甜菊醣苷、紅甜菜、專利藤黃果萃取物、葡萄酒粕萃取物、大吟釀酒粕）、專利毛喉鞘蕊花萃取物、四棱白粉藤萃取物、柑橘萃取物（含HPMF™）、仙人掌萃取物、玉米鬚萃取物" },
+
+  // 保養品
+  { brand:"Diu+", name:"蜂王乳全能卸妝淨顏霜", type:"cosmetic",
+    spec:"100ml", shelf_life:"3年", origin:"台灣", form:"乳霜",
+    serving:"乾臉取適量，均勻塗抹全臉，畫圈按摩至乳化後以清水洗淨",
+    storage:"陰涼乾燥處",
+    allergens:"蜂產品",
+    warnings:"出現異常反應請停止使用",
+    prohibited:"蜂產品過敏者",
+    ingredients:"水、礦物油、甘油、蜂蠟、蜂蜜萃取、赤芝萃取、玻尿酸、生育酚（維生素E）" },
+
+  { brand:"Diu+", name:"皇家胺基酸保濕洗顏蜜", type:"cosmetic",
+    spec:"100ml", shelf_life:"3年", origin:"台灣", form:"洗顏",
+    serving:"早晚使用，取適量於手掌加少量水，按摩後以清水洗淨",
+    storage:"避免高溫潮濕及陽光直射",
+    allergens:"無特別標示",
+    warnings:"皮膚有傷口或濕疹請停止使用；出現發紅或過敏請停止使用並就醫；pH5.5溫和配方",
+    prohibited:"肌膚過敏者注意",
+    ingredients:"水、椰油醯谷氨酸二鈉（胺基酸）、玻尿酸鈉、甘油、赤芝萃取" },
+
+  { brand:"Diu+", name:"藍銅保濕養膚水", type:"cosmetic",
+    spec:"100ml", shelf_life:"3年", origin:"台灣", form:"化妝水",
+    serving:"清潔後取適量輕拍臉部至吸收",
+    storage:"陰涼乾燥處，避免陽光直射",
+    allergens:"無特別標示",
+    warnings:"長時間靜置或溫度變化可能出現些微分層，使用前輕輕搖晃均勻即可",
+    prohibited:"無特別禁忌",
+    ingredients:"水、蘆薈葉萃取、銅胜肽（GHK-Cu）、玻尿酸鈉、甘油、赤芝萃取" },
+
+  { brand:"Diu+", name:"璀璨藍銅彈潤精華液", type:"cosmetic",
+    spec:"30ml", shelf_life:"3年", origin:"台灣", form:"精華液",
+    serving:"化妝水後，搖晃均勻，取適量輕柔按壓於全臉",
+    storage:"陰涼乾燥處，避免陽光直射",
+    allergens:"無特別標示",
+    warnings:"出現過敏或不適請停止使用",
+    prohibited:"無特別禁忌",
+    ingredients:"水、銅胜肽（GHK-Cu）、玻尿酸鈉、神經醯胺、赤芝萃取" },
+
+  { brand:"Diu+", name:"藍銅彈力緊緻水凝霜", type:"cosmetic",
+    spec:"50ml", shelf_life:"3年", origin:"台灣", form:"乳霜",
+    serving:"化妝水後，取適量輕點於臉部，以指腹均勻按摩至完全吸收",
+    storage:"陰涼乾燥處，避免陽光直射",
+    allergens:"無特別標示",
+    warnings:"出現過敏或不適請停止使用",
+    prohibited:"無特別禁忌",
+    ingredients:"水、銅胜肽（GHK-Cu）、玻尿酸鈉、甘油、赤芝萃取" },
+
+  // 大激賞
+  { brand:"大激賞", name:"閃閃金膠囊", type:"food",
+    spec:"0.5g/粒，20粒/袋，3袋/盒", shelf_life:"2年", origin:"台灣", form:"膠囊",
+    serving:"每日2次，每次1～2粒，餐前食用",
+    storage:"陰涼處保存，拆封後盡快食用",
+    allergens:"無特別標示",
+    warnings:"建議滿6歲以上使用",
+    prohibited:"6歲以下不建議",
+    ingredients:"靈芝菌絲體發酵酵粉、雲芝菌絲體發酵酵粉、鮮果萃取物、黑苦瓜萃取粉、洋蔥萃取物（含L-精胺酸）、橄欖粉、山葵葉萃取物、洋菇萃取粉" },
+
+  { brand:"大激賞", name:"閃閃銀膠囊", type:"food",
+    spec:"0.5g/粒，20粒/袋，3袋/盒", shelf_life:"2年", origin:"台灣", form:"膠囊",
+    serving:"每日2次，每次1～2粒，餐前食用",
+    storage:"陰涼處保存，拆封後盡快食用",
+    allergens:"無特別標示",
+    warnings:"建議滿6歲以上使用",
+    prohibited:"6歲以下不建議",
+    ingredients:"靈芝菌絲體發酵酵粉、玉米鬚萃取物、白腰豆萃取物、啤酒酵母胜肽、可可粉、天然香草香料、薑、多香果、肉桂、栗子種皮萃取物、山苦瓜萃取物、菸鹼酸鉻" },
+
+  { brand:"大激賞", name:"元氣紅潤膠囊", type:"food",
+    spec:"0.5g/顆×30顆", shelf_life:"3年", origin:"台灣", form:"膠囊",
+    serving:"每天一次，每次一顆，餐後食用",
+    storage:"陰涼乾燥處，避免高溫及陽光直射",
+    allergens:"膠囊含明膠（非全素）",
+    warnings:"孕婦建議先諮詢醫師；鐵劑敏感者建議餐後服用；非全素",
+    prohibited:"孕婦需諮詢",
+    ingredients:"磷酸氫鈣、微結晶纖維素、啤酒酵母B群、硒酵母、複方維生素C、甘胺酸亞鐵、鋅酵母、重酒石酸膽鹼" },
+
+  { brand:"大激賞", name:"納豆Q10膠囊", type:"food",
+    spec:"550mg/粒×90粒/盒", shelf_life:"2年", origin:"台灣", form:"膠囊",
+    serving:"每日2粒，搭配溫開水，餐後食用",
+    storage:"陰涼乾燥處，拆封後儘速食用",
+    allergens:"無特別標示",
+    warnings:"⚠️ 15歲以下小孩、孕婦、哺乳期婦女及服用抗凝血藥品（warfarin）之病患不宜食用",
+    prohibited:"15歲以下禁用、孕婦禁用、哺乳婦女禁用、服用warfarin者禁用",
+    ingredients:"專利番紅花萃取物、紅麴萃取粉、納豆發酵物（納豆激酶）、輔酵素Q10、硬脂酸鎂、二氧化矽" },
 ];
 
-// ── 產品名稱比對輔助函式 ──────────────────────────────────────
+// ══════════════════════════════════════════════
+// AI 審查 Prompt
+// ══════════════════════════════════════════════
+const FOOD_PROMPT = `你是台灣食品包裝合規審查專家。請仔細分析設計稿圖片上的所有文字，審查以下項目：
+
+【食品標示必要項目（食安法第22條）】
+1. 品名（必須清楚標示）
+2. 內容物名稱及重量、容量或數量
+3. 食品添加物名稱（需列出所有添加物）
+4. 製造廠商或負責廠商名稱、電話及地址
+5. 原產地（國）
+6. 有效日期（保存期限）
+7. 營養標示（依規定格式）
+8. 含基因改造食品原料聲明（如適用）
+9. 過敏原標示（八大過敏原：蛋、奶、花生、堅果、芝麻、大豆、魚、甲殼類）
+10. 其他經中央主管機關公告之事項
+
+【常見問題】
+- 過敏原未標示或標示不完整
+- 保存期限格式錯誤（應為年月日）
+- 成分名稱與資料庫不符
+- 廠商資訊不完整
+- 條碼與產品不符
+
+【回傳格式】只回傳JSON，不要有任何其他文字或markdown：
+{"summary":"整體評語（2句話）","score":"pass或warn或fail","issues":[{"level":"error或warn或ok或info","title":"問題標題","desc":"具體說明，指出設計稿上的位置或文字"}]}`;
+
+const COSMETIC_PROMPT = `你是台灣化粧品包裝合規審查專家。請仔細分析設計稿圖片上的所有文字，審查以下項目：
+
+【化粧品標示必要項目（化粧品衛生安全管理法第7條）】
+1. 中文品名
+2. 用途
+3. 用法
+4. 淨重、容量或數量
+5. 全成分名稱（依含量多寡排列）
+6. 製造廠商名稱及地址（輸入品加標輸入廠商名稱及地址）
+7. 製造日期或批號
+8. 保存期限或有效日期
+9. 保存方法
+10. 警語（如有特定成分）
+
+【常見問題】
+- 全成分未依INCI名稱標示
+- 保存期限格式錯誤
+- 未標示批號或製造日期
+- 特定成分未加警語
+- 廠商資訊不完整
+
+【回傳格式】只回傳JSON，不要有任何其他文字或markdown：
+{"summary":"整體評語（2句話）","score":"pass或warn或fail","issues":[{"level":"error或warn或ok或info","title":"問題標題","desc":"具體說明，指出設計稿上的位置或文字"}]}`;
+
+// ══════════════════════════════════════════════
+// 輔助函式
+// ══════════════════════════════════════════════
+function findProductByBarcode(bc) { return PRODUCT_DB.find(p => p.barcode === bc); }
 function findProductByName(name) {
   if (!name) return null;
-  const n = name.trim().toLowerCase();
-  return PRODUCT_DB.find(p =>
-    p.name.toLowerCase().includes(n) ||
-    n.includes(p.name.toLowerCase().replace(/（.*?）/g, '').trim())
-  );
+  const n = name.trim();
+  return PRODUCT_DB.find(p => p.name.includes(n) || n.includes(p.name.replace(/（.*?）/g,'').trim()));
 }
 
-function findProductByBarcode(barcode) {
-  return PRODUCT_DB.find(p => p.barcode === barcode);
+function checkBC(val) {
+  if (!val) return { cls:'empty', text:'未填寫' };
+  const dupes = Array.from(document.querySelectorAll('.bc-input')).map(i=>i.value.trim()).filter(v=>v===val);
+  if (dupes.length > 1) return { cls:'dup', text:'重複' };
+  const found = BARCODE_DB.find(d => d.barcode === val);
+  if (found) return { cls:'ok', text:`✓ ${found.brand}｜${found.name}` };
+  return { cls:'new', text:'★ 新條碼（未登記）' };
 }
 
-// ── 狀態 ──────────────────────────────────────────────────
+function updateBadge(input) {
+  const badge = input.closest('.bc-row').querySelector('.bc-badge');
+  const { cls, text } = checkBC(input.value.trim());
+  badge.className = 'bc-badge ' + cls;
+  badge.textContent = text;
+  showProductInfo();
+}
+
+function addBarcodeRow() {
+  const row = document.createElement('div');
+  row.className = 'bc-row';
+  row.innerHTML = `<input type="text" class="bc-input" placeholder="輸入條碼號碼（EAN-13）" maxlength="20"><span class="bc-badge empty">未填寫</span><button class="bc-remove" onclick="this.closest('.bc-row').remove();showProductInfo()">×</button>`;
+  row.querySelector('input').addEventListener('input', e => updateBadge(e.target));
+  document.getElementById('bcList').appendChild(row);
+}
+
+function showProductInfo() {
+  const bcVals = Array.from(document.querySelectorAll('.bc-input')).map(i=>i.value.trim()).filter(Boolean);
+  const productName = document.getElementById('productName').value.trim();
+  let p = null;
+  for (const v of bcVals) { p = findProductByBarcode(v); if (p) break; }
+  if (!p && productName) p = findProductByName(productName);
+  const card = document.getElementById('productInfoCard');
+  const content = document.getElementById('productInfoContent');
+  if (!p) { card.classList.add('hidden'); return; }
+  card.classList.remove('hidden');
+  const isAllergen = a => a && a !== '無常見過敏原' && a !== '無特別標示';
+  const rows = [
+    ['品牌', p.brand], ['產品名稱', p.name], ['規格', p.spec],
+    ['保存期限', p.shelf_life], ['原產地', p.origin], ['劑型', p.form],
+    ['食用/用法', p.serving], ['保存方式', p.storage],
+    ['過敏原', `<span class="${isAllergen(p.allergens)?'pill-red':''}">${p.allergens}</span>`],
+    ['注意事項', `<span class="pill-warn">${p.warnings}</span>`],
+    ['禁用族群', p.prohibited], ['全成分', p.ingredients],
+  ];
+  content.innerHTML = `<table class="product-table">${rows.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`;
+}
+
+// ══════════════════════════════════════════════
+// 上傳
+// ══════════════════════════════════════════════
 let uploadedFiles = [];
-let allIssues = [];
-let bcIdx = 1;
-let approvedHistory = JSON.parse(localStorage.getItem('mars_approved') || '[]');
-
-// ── 上傳 ──────────────────────────────────────────────────
-const uploadZone = document.getElementById('uploadZone');
+const zone = document.getElementById('uploadZone');
 const fileInput = document.getElementById('fileInput');
-uploadZone.addEventListener('click', () => fileInput.click());
-uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag'); });
-uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag'));
-uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
+const grid = document.getElementById('previewGrid');
+
+zone.addEventListener('click', () => fileInput.click());
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
 fileInput.addEventListener('change', e => handleFiles(e.target.files));
 
 function handleFiles(files) {
-  Array.from(files).slice(0, 5 - uploadedFiles.length).forEach(f => {
+  Array.from(files).slice(0, 5 - uploadedFiles.length).forEach(file => {
+    if (!file.type.startsWith('image/')) return;
     const reader = new FileReader();
-    reader.onload = ev => { uploadedFiles.push({ name: f.name, data: ev.target.result, type: f.type }); renderPreviews(); };
-    reader.readAsDataURL(f);
+    reader.onload = e => {
+      uploadedFiles.push({ data: e.target.result, type: file.type, name: file.name });
+      renderPreviews();
+    };
+    reader.readAsDataURL(file);
   });
 }
 
 function renderPreviews() {
-  const grid = document.getElementById('previewGrid');
-  grid.innerHTML = uploadedFiles.map((f, i) => `
-    <div class="preview-item">
-      <img src="${f.data}" alt="${f.name}" />
-      <div class="preview-name">${f.name}</div>
-      <button class="preview-remove" onclick="removeFile(${i})">✕</button>
+  grid.innerHTML = uploadedFiles.map((f,i) => `
+    <div>
+      <div class="preview-item">
+        <img src="${f.data}">
+        <button class="remove-btn" onclick="removeFile(${i})">×</button>
+      </div>
+      <div class="preview-label">${f.name}</div>
     </div>`).join('');
 }
 
-function removeFile(i) { uploadedFiles.splice(i, 1); renderPreviews(); }
+function removeFile(i) { uploadedFiles.splice(i,1); renderPreviews(); }
 
-// ── 條碼 ──────────────────────────────────────────────────
-function addBarcodeRow() {
-  const list = document.getElementById('barcodeList');
-  const div = document.createElement('div');
-  div.className = 'barcode-row'; div.dataset.idx = bcIdx++;
-  div.innerHTML = `<input type="text" class="barcode-input bc-input" placeholder="EAN-13 條碼" maxlength="20" oninput="checkBarcodes()" />
-    <span class="barcode-status bc-empty">未填寫</span>
-    <button class="btn-remove-bc" onclick="this.parentElement.remove(); checkBarcodes()">×</button>`;
-  list.appendChild(div);
-  div.querySelector('input').addEventListener('input', () => { checkBarcodes(); showProductInfo(); });
-}
-
-function showProductInfo() {
-  const bcVals = Array.from(document.querySelectorAll('.bc-input')).map(i => i.value.trim()).filter(Boolean);
-  const productName = document.getElementById('productName').value.trim();
-  let p = null;
-  for (const v of bcVals) {
-    p = findProductByBarcode(v);
-    if (p) break;
-  }
-  if (!p && productName) p = findProductByName(productName);
-
-  const card = document.getElementById('productInfoCard');
-  const content = document.getElementById('productInfoContent');
-  if (!p) { card.style.display = 'none'; return; }
-  card.style.display = 'block';
-
-  const rows = [
-    ['品牌', p.brand],
-    ['產品名稱', p.name],
-    ['規格/淨重', p.spec],
-    ['保存期限', p.shelf_life],
-    ['原產地', p.origin],
-    ['劑型', p.form],
-    ['食用/用法', p.serving],
-    ['保存方式', p.storage],
-    ['過敏原', `<span class="${(p.allergens.includes('⚠️') || (p.allergens !== '無常見過敏原' && p.allergens !== '無特別標示')) ? 'product-info-allergen' : ''}">${p.allergens}</span>`],
-    ['注意事項', `<span class="product-info-warn">${p.warnings}</span>`],
-    ['禁用族群', p.prohibited],
-    ['全成分', p.ingredients],
-  ];
-  content.innerHTML = `<table class="product-info-table">${rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`;
-}
-
-document.getElementById('productName').addEventListener('input', showProductInfo);
-document.querySelector('.bc-input').addEventListener('input', () => { checkBarcodes(); showProductInfo(); });
-
-function checkBarcodes() {
-  const rows = document.querySelectorAll('.barcode-row');
-  const vals = Array.from(rows).map(r => r.querySelector('.bc-input').value.trim());
-  let infoHTML = '';
-
-  rows.forEach((row, i) => {
-    const v = vals[i];
-    const status = row.querySelector('.barcode-status');
-    if (!v) { status.className = 'barcode-status bc-empty'; status.textContent = '未填寫'; return; }
-    const isDup = vals.filter((x, j) => j !== i && x === v && x !== '').length > 0;
-    if (isDup) { status.className = 'barcode-status bc-dup'; status.textContent = '⚠ 重複'; return; }
-    const dbMatch = BARCODE_DB.find(d => d.barcode === v);
-    if (dbMatch) {
-      status.className = 'barcode-status bc-match';
-      status.textContent = '已登記';
-      infoHTML += `<div class="barcode-match-info">✓ ${v} → ${dbMatch.brand}｜${dbMatch.name}</div>`;
-    } else if (/^\d{8}$|^\d{13}$/.test(v)) {
-      status.className = 'barcode-status bc-new';
-      status.textContent = '新條碼';
-      infoHTML += `<div class="barcode-match-info" style="color:var(--info)">★ ${v} 未在資料庫，請確認是否為新品條碼</div>`;
-    } else {
-      status.className = 'barcode-status bc-empty';
-      status.textContent = '格式異常';
-    }
-  });
-  document.getElementById('barcodeMatchInfo').innerHTML = infoHTML;
-}
-
-// ── 審查 ──────────────────────────────────────────────────
-const FOOD_PROMPT = `你是台灣食品包裝法規專家。依據食品安全衛生管理法第22條審查包裝設計圖。
-
-必要標示項目：
-1. 品名（中文為主，不得使用誇大不實字詞）
-2. 內容物名稱及重量/容量/數量（每小包及每盒）
-3. 食品添加物名稱（完整列出所有添加物）
-4. 製造廠商名稱、電話及地址（進口品需有進口商資訊）
-5. 原產地（國）
-6. 有效日期（標示位置說明：XX年XX月XX日 或 最佳賞味期限）
-7. 營養標示（熱量、蛋白質、脂肪、飽和脂肪、反式脂肪、碳水化合物、糖、鈉）
-8. 基因改造食品原料（如適用需標示）
-9. 過敏原標示（蛋、奶、花生、堅果、芝麻、魚、甲殼類、大豆、小麥）
-10. 條碼（EAN-13 或 QR碼）
-11. 消費者服務專線
-12. 「食品」標示及回收圖示
-
-禁止用詞：治療、醫療效果、預防疾病、療效、特效等醫療宣稱。
-注意事項標示：孕婦、兒童、服藥者使用限制。
-字體：中文字最小應達 4pt，關鍵標示不得被遮蓋。`;
-
-const COSMETIC_PROMPT = `你是台灣化粧品包裝法規專家。依據化粧品衛生安全管理法第7條審查包裝設計圖。
-
-必要標示項目：
-1. 品名（中文為主）
-2. 用途（功能說明，不得有醫療宣稱）
-3. 用法（使用方式）
-4. 淨重/容量/數量（中文標示）
-5. 全成分（INCI名稱，依濃度由高至低排列）
-6. 製造廠商名稱及地址（進口品需有輸入廠商）
-7. 製造日期或批號
-8. 保存期限或有效日期（效期≦3年者須標示）
-9. 保存方法（特殊保存需求）
-10. 警語（如含酒精、避免眼睛接觸、兒童不宜等）
-11. QR碼（連結至PIF產品資訊檔案，2026年7月1日起適用）
-12. 許可字號（含防腐劑、類固醇等特定成分者）
-
-禁止用詞：治療、醫療、藥用、療效等醫療宣稱。
-成分標示：含1%以上成分依濃度排列，1%以下可任意順序，色素、香料可統稱。`;
+// ══════════════════════════════════════════════
+// 主審查邏輯
+// ══════════════════════════════════════════════
+let allIssues = [];
+let activeFilter = 'all';
 
 async function runCheck() {
   const apiKey = document.getElementById('apiKey').value.trim();
   const productType = document.getElementById('productType').value;
-  const packagingType = document.getElementById('packagingType').value;
-  const brand = document.getElementById('brandSelect').value;
+  const pkgType = document.getElementById('pkgType').value;
+  const brand = document.getElementById('brand').value;
   const productName = document.getElementById('productName').value.trim();
 
-  if (!apiKey) { alert('請先輸入 Claude API Key'); return; }
-  if (!productType || !packagingType) { alert('請選擇產品類型與包裝類型'); return; }
-  if (uploadedFiles.length === 0) { alert('請上傳至少一張設計稿'); return; }
+  if (!apiKey) { alert('請輸入 Claude API Key'); return; }
+  if (!productType) { alert('請選擇產品類型'); return; }
+  if (uploadedFiles.length === 0) { alert('請上傳設計稿圖片'); return; }
 
   const btn = document.getElementById('runBtn');
   btn.disabled = true;
-  btn.innerHTML = `<span class="loading-dots"><span></span><span></span><span></span></span>&nbsp;AI 審查中，請稍候…`;
+  btn.innerHTML = '<span class="spinner"></span> AI 審查中…';
   document.getElementById('resultSection').classList.add('hidden');
+  document.getElementById('actionBar').classList.add('hidden');
 
-  const ptLabel = { food: '食品', cosmetic: '保養品／化粧品' }[productType];
-  const pkgLabel = { alubag: '鋁袋／鋁包', outerbox: '外盒', label: '瓶貼／標籤', bottle: '瓶身' }[packagingType];
+  // 條碼分析
+  const bcVals = Array.from(document.querySelectorAll('.bc-input')).map(i=>i.value.trim()).filter(Boolean);
+  const dupBc = bcVals.filter((v,i,a) => a.indexOf(v) !== i);
+  const matchBc = bcVals.filter(v => BARCODE_DB.find(d=>d.barcode===v));
+  const newBc = bcVals.filter(v => !BARCODE_DB.find(d=>d.barcode===v));
 
-  const bcVals = Array.from(document.querySelectorAll('.bc-input')).map(i => i.value.trim()).filter(Boolean);
-  const dupBc = bcVals.filter((v, i) => bcVals.indexOf(v) !== i);
-  const newBc = bcVals.filter(v => !BARCODE_DB.find(d => d.barcode === v) && /^\d{8}$|^\d{13}$/.test(v));
-  const matchBc = bcVals.filter(v => BARCODE_DB.find(d => d.barcode === v));
+  // 產品資料比對
+  let p = null;
+  for (const v of bcVals) { p = findProductByBarcode(v); if (p) break; }
+  if (!p && productName) p = findProductByName(productName);
 
-  // 比對產品資料庫
-  let productData = null;
-  if (bcVals.length && matchBc.length) {
-    productData = findProductByBarcode(matchBc[0]);
-  }
-  if (!productData && productName) {
-    productData = findProductByName(productName);
-  }
-
-  const productDataBlock = productData ? `
+  const productDataBlock = p ? `
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📦 產品資料庫比對結果（請重點核查以下欄位是否正確）：
-品牌：${productData.brand}
-產品名稱：${productData.name}
-規格/淨重：${productData.net_weight || productData.spec}
-完整規格：${productData.spec}
-保存期限：${productData.shelf_life}
-原產地：${productData.origin}
-劑型：${productData.form}
-食用方式/用法：${productData.serving}
-保存方式：${productData.storage}
-過敏原：${productData.allergens}
-注意事項：${productData.warnings}
-不適用族群：${productData.prohibited}
-全成分：${productData.ingredients}
+📦 產品資料庫（請逐一核查設計稿是否與以下資料一致）：
+品牌：${p.brand}
+產品名稱：${p.name}
+規格：${p.spec}
+保存期限：${p.shelf_life}
+原產地：${p.origin}
+劑型：${p.form}
+食用/用法：${p.serving}
+保存方式：${p.storage}
+過敏原：${p.allergens}
+注意事項：${p.warnings}
+禁用族群：${p.prohibited}
+全成分：${p.ingredients}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-請逐一核查設計稿上的每個欄位是否與上述資料庫資料一致，若有不符請列為問題項目。` : '';
+若設計稿上的任何欄位與上述不符，請列為問題項目。` : '';
+
+  const ptLabel = productType === 'food' ? '食品／保健食品' : '保養品／化妝品';
+  const pkgLabel = { box:'彩盒', bottle:'瓶器標籤', sticker:'貼紙', pouch:'袋裝' }[pkgType] || '未指定';
 
   const systemPrompt = (productType === 'food' ? FOOD_PROMPT : COSMETIC_PROMPT) + `
 
@@ -1102,40 +724,19 @@ async function runCheck() {
 包裝類型：${pkgLabel}
 設計稿條碼：${bcVals.join('、') || '未提供'}
 ${dupBc.length ? `⚠️ 重複條碼：${dupBc.join('、')}` : ''}
-${newBc.length ? `★ 新條碼（未在資料庫）：${newBc.join('、')}` : ''}
-${matchBc.length ? `✓ 已登記條碼：${matchBc.map(v => { const d = BARCODE_DB.find(x => x.barcode === v); return `${v}（${d.brand}｜${d.name}）`; }).join('、')}` : ''}
-${productDataBlock}
+${newBc.length ? `★ 新條碼（未登記）：${newBc.join('、')}` : ''}
+${matchBc.length ? `✓ 已登記條碼：${matchBc.map(v=>{const d=BARCODE_DB.find(x=>x.barcode===v);return `${v}（${d.brand}｜${d.name}）`;}).join('、')}` : ''}
+${productDataBlock}`;
 
-請仔細分析圖片中可見的所有文字內容，逐一核對上述必要標示項目。
-
-回覆格式（只回JSON，不要有其他文字或markdown）：
-{
-  "summary": "整體評語（2句話）",
-  "score": "pass 或 warn 或 fail",
-  "issues": [
-    {
-      "level": "error 或 warn 或 ok 或 info",
-      "title": "問題標題",
-      "desc": "說明與建議（具體指出位置或文字）"
-    }
-  ]
-}`;
-
-  // Claude API - system prompt 分離，節省 token
-  const claudeUserContent = [
+  const userContent = [
     ...uploadedFiles.map(f => ({
       type: "image",
-      source: {
-        type: "base64",
-        media_type: f.type,
-        data: f.data.split(',')[1]
-      }
+      source: { type: "base64", media_type: f.type, data: f.data.split(',')[1] }
     })),
-    { type: "text", text: "請審查以上包裝設計稿，回傳JSON格式審查報告。只回JSON，不要有其他文字或markdown。" }
+    { type: "text", text: "請審查以上包裝設計稿，回傳JSON格式審查報告。只回JSON，不要有任何其他文字。" }
   ];
 
   try {
-    // 呼叫 Anthropic Claude API
     const resp = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -1145,35 +746,33 @@ ${productDataBlock}
         "anthropic-dangerous-direct-browser-access": "true"
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-6",
+        model: "claude-haiku-4-5-20251001",
         max_tokens: 4096,
         system: systemPrompt,
-        messages: [{ role: "user", content: claudeUserContent }]
+        messages: [{ role: "user", content: userContent }]
       })
     });
+
     const data = await resp.json();
     if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
     let text = data.content?.[0]?.text || '';
-    // 容錯：移除 markdown、只取第一個完整 JSON 物件
     text = text.replace(/```json|```/g, '').trim();
     const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) throw new Error('AI 回傳格式錯誤，請重試');
+    if (!jsonMatch) throw new Error('AI 回傳格式異常，請重試');
     const parsed = JSON.parse(jsonMatch[0]);
 
     // 注入條碼問題
-    if (dupBc.length) {
-      parsed.issues.unshift({ level: 'error', title: '條碼重複', desc: `條碼 ${dupBc.join('、')} 在同一份設計稿中重複出現，請確認各包裝使用獨立條碼。` });
-    }
-    if (newBc.length) {
-      parsed.issues.push({ level: 'warn', title: '新條碼未登記', desc: `${newBc.join('、')} 不在現有條碼資料庫中，請確認是否為正確的新品條碼，並更新登記。` });
-    }
+    if (dupBc.length) parsed.issues.unshift({ level:'error', title:'條碼重複', desc:`條碼 ${dupBc.join('、')} 在同一份設計稿中重複出現，請確認各包裝使用獨立條碼。` });
+    if (newBc.length) parsed.issues.push({ level:'warn', title:'新條碼未登記', desc:`${newBc.join('、')} 不在現有條碼資料庫中，請確認是否為正確新品條碼並更新登記。` });
 
     allIssues = parsed.issues || [];
+    activeFilter = 'all';
     renderResults(parsed);
+
   } catch (err) {
     document.getElementById('resultSection').classList.remove('hidden');
-    allIssues = [{ level: 'error', title: '審查失敗', desc: err.message }];
-    renderResults({ summary: '審查過程發生錯誤，請確認 API Key 是否正確。', score: 'fail', issues: allIssues });
+    allIssues = [{ level:'error', title:'審查失敗', desc: err.message }];
+    renderResults({ summary:'審查過程發生錯誤，請確認 API Key 是否正確。', score:'fail', issues: allIssues });
   }
 
   btn.disabled = false;
@@ -1182,128 +781,54 @@ ${productDataBlock}
 
 function renderResults(parsed) {
   document.getElementById('resultSection').classList.remove('hidden');
+  document.getElementById('actionBar').classList.remove('hidden');
 
   const badge = document.getElementById('scoreBadge');
-  const scoreMap = { pass: ['✅ 符合規定', 'score-pass'], warn: ['⚠️ 需要修改', 'score-warn'], fail: ['🔴 有重大缺失', 'score-fail'] };
-  const [lbl, cls] = scoreMap[parsed.score] || ['未知', 'score-warn'];
-  badge.textContent = lbl; badge.className = `score-badge ${cls}`;
+  const scoreMap = { pass:['✅ 符合規定','pass'], warn:['⚠️ 需要修改','warn'], fail:['🔴 有重大缺失','fail'] };
+  const [lbl, cls] = scoreMap[parsed.score] || ['未知','warn'];
+  badge.className = 'score-badge ' + cls;
+  badge.textContent = lbl;
 
-  document.getElementById('resultSummary').textContent = parsed.summary;
-  document.getElementById('statError').textContent = allIssues.filter(i => i.level === 'error').length;
-  document.getElementById('statWarn').textContent = allIssues.filter(i => i.level === 'warn').length;
-  document.getElementById('statOk').textContent = allIssues.filter(i => i.level === 'ok').length;
+  const errors = allIssues.filter(i=>i.level==='error').length;
+  const warns = allIssues.filter(i=>i.level==='warn').length;
+  const oks = allIssues.filter(i=>i.level==='ok').length;
+  document.getElementById('scoreBar').innerHTML = `
+    <div class="score-box error"><div class="num">${errors}</div><div class="lbl">必須修正</div></div>
+    <div class="score-box warn"><div class="num">${warns}</div><div class="lbl">建議修改</div></div>
+    <div class="score-box ok"><div class="num">${oks}</div><div class="lbl">符合規定</div></div>`;
 
-  filterIssues('all', document.querySelector('.filter-tab.active'));
-  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('summaryText').textContent = parsed.summary || '';
+
+  const filterBar = document.getElementById('filterBar');
+  filterBar.innerHTML = ['all','error','warn','ok','info'].map(f => {
+    const labels = { all:'全部', error:'必須修正', warn:'建議修改', ok:'符合規定', info:'參考資訊' };
+    return `<button class="filter-btn${activeFilter===f?' active':''}" onclick="setFilter('${f}')">${labels[f]}</button>`;
+  }).join('');
+
+  renderIssues();
 }
 
-function filterIssues(type, tabEl) {
-  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-  if (tabEl) tabEl.classList.add('active');
-  const filtered = type === 'all' ? allIssues : allIssues.filter(i => i.level === type);
-  const icons = { error: '🔴', warn: '⚠️', ok: '✅', info: 'ℹ️' };
-  const cls = { error: 'issue-error', warn: 'issue-warn', ok: 'issue-ok', info: 'issue-info' };
-  const list = document.getElementById('issueList');
-  if (!filtered.length) { list.innerHTML = '<div class="empty-state">此分類無項目</div>'; return; }
-  list.innerHTML = filtered.map(issue => `
-    <div class="issue-item ${cls[issue.level] || 'issue-info'}">
-      <div class="issue-icon">${icons[issue.level] || 'ℹ️'}</div>
-      <div><div class="issue-title">${issue.title}</div><div class="issue-desc">${issue.desc}</div></div>
-    </div>`).join('');
+function setFilter(f) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.textContent === {all:'全部',error:'必須修正',warn:'建議修改',ok:'符合規定',info:'參考資訊'}[f]));
+  renderIssues();
 }
 
-function approveDesign() {
-  const brand = document.getElementById('brandSelect').value;
-  const productName = document.getElementById('productName').value.trim();
-  const ptLabel = { food: '食品', cosmetic: '保養品／化粧品' }[document.getElementById('productType').value] || '';
-  const bcVals = Array.from(document.querySelectorAll('.bc-input')).map(i => i.value.trim()).filter(Boolean);
-  const record = {
-    id: Date.now(),
-    date: new Date().toLocaleString('zh-TW'),
-    brand, productName, type: ptLabel,
-    barcodes: bcVals,
-    summary: document.getElementById('resultSummary').textContent,
-    errors: allIssues.filter(i => i.level === 'error').length,
-    warns: allIssues.filter(i => i.level === 'warn').length,
-    issues: allIssues
-  };
-  approvedHistory.unshift(record);
-  localStorage.setItem('mars_approved', JSON.stringify(approvedHistory));
-  renderHistory();
-  alert(`✅ 已核准放行！\n產品：${brand} ${productName}\n紀錄已儲存至「核准紀錄」`);
-}
-
-function rejectDesign() {
-  if (confirm('確認退件？設計師需重新修改後再送審。')) {
-    alert('🔴 已退件。請將審查報告截圖後回覆設計師。');
-  }
-}
-
-// ── 資料庫 ──────────────────────────────────────────────────
-function renderDB() {
-  const q = document.getElementById('dbSearch').value.toLowerCase();
-  const filtered = BARCODE_DB.filter(d =>
-    d.barcode.includes(q) || d.brand.toLowerCase().includes(q) || d.name.toLowerCase().includes(q)
-  );
-  const isDiu = b => b.brand.toLowerCase().includes('diu');
-  document.getElementById('dbBody').innerHTML = filtered.map(d => `
-    <tr>
-      <td style="font-family:var(--mono);font-size:11px;">${d.barcode}</td>
-      <td>${isDiu(d) ? `<span class="tag-diu">${d.brand}</span>` : d.brand}</td>
-      <td>${d.name}</td>
-    </tr>`).join('');
-}
-renderDB();
-
-// ── 紀錄 ──────────────────────────────────────────────────
-function renderHistory() {
-  const list = document.getElementById('historyList');
-  if (!approvedHistory.length) { list.innerHTML = '<div class="empty-state">尚無核准紀錄</div>'; return; }
-  list.innerHTML = approvedHistory.map(r => `
-    <div class="history-item">
+function renderIssues() {
+  const list = activeFilter === 'all' ? allIssues : allIssues.filter(i=>i.level===activeFilter);
+  document.getElementById('issueList').innerHTML = list.map(i => `
+    <div class="issue-item ${i.level}">
+      <div class="issue-dot"></div>
       <div>
-        <div style="font-size:13px;font-weight:600;">${r.brand} ${r.productName || ''} <span style="font-size:11px;font-weight:400;color:var(--text3);">${r.type}</span></div>
-        <div class="history-meta">${r.date}｜條碼：${r.barcodes.join('、') || '—'}｜修正 ${r.errors} 項・建議 ${r.warns} 項</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:2px;">${r.summary}</div>
+        <div class="issue-title">${i.title}</div>
+        <div class="issue-desc">${i.desc}</div>
       </div>
-      <div class="history-actions">
-        <button class="btn-sm danger" onclick="deleteHistory(${r.id})">刪除</button>
-      </div>
-    </div>`).join('');
-}
-renderHistory();
-
-function deleteHistory(id) {
-  if (!confirm('確認刪除此紀錄？')) return;
-  approvedHistory = approvedHistory.filter(r => r.id !== id);
-  localStorage.setItem('mars_approved', JSON.stringify(approvedHistory));
-  renderHistory();
+    </div>`).join('') || '<div style="color:#aaa;font-size:13px;padding:8px 0">此分類沒有問題項目</div>';
 }
 
-// ── UI 工具 ──────────────────────────────────────────────────
-function switchTab(name, el) {
-  document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById(`tab-${name}`).classList.add('active');
-  if (name === 'database') renderDB();
-  if (name === 'history') renderHistory();
-}
-
-function toggleApiKey() {
-  const inp = document.getElementById('apiKey');
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-}
-
-// API Key：HTML 內建 Key 優先，sessionStorage 只在 HTML 沒有 Key 時才套用
-document.getElementById('apiKey').addEventListener('change', e => {
-  sessionStorage.setItem('claude_key', e.target.value);
-});
-const hardcodedKey = document.getElementById('apiKey').value;
-if (!hardcodedKey) {
-  const savedKey = sessionStorage.getItem('claude_key');
-  if (savedKey) document.getElementById('apiKey').value = savedKey;
-}
+// ── Init ──
+document.querySelector('.bc-input').addEventListener('input', e => updateBadge(e.target));
+document.getElementById('productName').addEventListener('input', showProductInfo);
 </script>
 </body>
 </html>
